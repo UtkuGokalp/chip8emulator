@@ -11,10 +11,6 @@ void Chip8_Screen::DisplayScreen()
     {
         for (int x = 0; x < WIDTH; x++)
         {
-            //IMPORTANT!!!
-            //screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK part is just a placeholder
-            //and is a wrong logic! Change when the other parts of the emulator are able to
-            //support the actual logic.
             pgeInstance.Draw(x, y, screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK);
         }
     }
@@ -23,4 +19,14 @@ void Chip8_Screen::DisplayScreen()
 void Chip8_Screen::ClearScreen()
 {
     memset(screen, 0x00, WIDTH * HEIGHT);
+}
+
+uint8_t Chip8_Screen::GetPixel(uint8_t x, uint8_t y)
+{
+    return screen[x + y * WIDTH];
+}
+
+void Chip8_Screen::SetPixel(uint8_t x, uint8_t y, uint8_t color)
+{
+    screen[x + y * WIDTH] = color;
 }

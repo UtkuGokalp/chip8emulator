@@ -18,4 +18,6 @@ public:
     Chip8_Screen(olc::PixelGameEngine& instance);
     void DisplayScreen();
     void ClearScreen();
+    uint8_t GetPixel(uint8_t x, uint8_t y);
+    void SetPixel(uint8_t x, uint8_t y, uint8_t color);
 };

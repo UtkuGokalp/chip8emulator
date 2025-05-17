@@ -223,6 +223,38 @@ void Chip8_CPU::ExecuteNextInstruction()
         registers[registerIndex] = (rand() % 256) & value;
         break;
     case 0xD000: //DRW Vx, Vy, nibble
+        uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
+        uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
+        uint8_t spriteHeight = opcode & 0x000F;
+
+        registers[(int)RegisterID::VF] = 0; // Reset collision flag
+
+        for (int row = 0; row < spriteHeight; row++)
+        {
+            uint8_t spriteByte;
+            ram.GetMemory(Iregister + row, spriteByte);
+
+            for (int col = 0; col < 8; col++)
+            {
+                uint8_t spritePixel = (spriteByte >> (7 - col)) & 0x1;
+                if (spritePixel == 0)
+                {
+                    continue;
+                }
+
+                int x = (registers[registerIndex1] + col) % 64; // wrap around horizontally
+                int y = (registers[registerIndex2] + row) % 32; // wrap around vertically
+
+                if (screen.GetPixel(x, y) == 1)
+                {
+                    registers[(int)RegisterID::VF] = 1; // collision
+                }
+
+                uint8_t newPixel = screen.GetPixel(x, y) ^ 1;
+                screen.SetPixel(x, y, newPixel);
+            }
+        }
+
         break;
     case 0xE000:
         uint8_t registerIndex = (opcode & 0x0F00) >> 8;
@@ -257,7 +289,7 @@ void Chip8_CPU::ExecuteNextInstruction()
             break;
         case 0x0A: //LD Vx, K
             Chip8_Keyboard::Chip8Key pressedKey;
-            while (!keyboard.AnyKeyPressed(pressedKey)) { }
+            while (!keyboard.AnyKeyPressed(pressedKey)) {}
             registers[registerIndex] = (uint8_t)pressedKey;
             break;
         case 0x15: //LD DT, Vx
