@@ -3,11 +3,39 @@
 //MEMORY
 Chip8_Memory::Chip8_Memory()
 {
-    //Give every byte the 0xAA value in memory as a default for helping with debugging.
-    //0xAA most likely means uninitialized memory in this case
-    for (int i = 0; i < this->MEMORY_SIZE_IN_BYTES; i++)
+    //Load the hexadecimal digits into the memory, in locations 0x000 to 0x1FF
+    uint8_t hexDigits[16][5] =
     {
-        this->memory[i] = 0xAA;
+        { 0xF0, 0x90, 0x90, 0x90, 0xF0 }, //hex 0
+        { 0x20, 0x60, 0x20, 0x20, 0x70 }, //hex 1
+        { 0xF0, 0x10, 0xF0, 0x80, 0xF0 }, //hex 2
+        { 0xF0, 0x10, 0xF0, 0x10, 0xF0 }, //hex 3
+        { 0x90, 0x90, 0xF0, 0x10, 0x10 }, //hex 4
+        { 0xF0, 0x80, 0xF0, 0x10, 0xF0 }, //hex 5
+        { 0xF0, 0x80, 0xF0, 0x90, 0xF0 }, //hex 6
+        { 0xF0, 0x10, 0x20, 0x40, 0x40 }, //hex 7
+        { 0xF0, 0x90, 0xF0, 0x90, 0xF0 }, //hex 8
+        { 0xF0, 0x90, 0xF0, 0x10, 0xF0 }, //hex 9
+        { 0xF0, 0x90, 0xF0, 0x90, 0x90 }, //hex A
+        { 0xE0, 0x90, 0xE0, 0x90, 0xE0 }, //hex B
+        { 0xF0, 0x80, 0x80, 0x80, 0xF0 }, //hex C
+        { 0xE0, 0x90, 0x90, 0x90, 0xE0 }, //hex D
+        { 0xF0, 0x80, 0xF0, 0x80, 0xF0 }, //hex E
+        { 0xF0, 0x80, 0xF0, 0x80, 0x80 }, //hex F
+    };
+    for (int i = 0; i < 16; i++)
+    {
+        //Starting to load the font data from memory location 0x050
+        //is a common choice for Chip8 emulators. It leaves room
+        //for other interpreter variables.
+        uint8_t offset = (sizeof(uint8_t) * 5 * i) + 0x050;
+        memcpy(memory + offset, hexDigits[i], sizeof(uint8_t) * 5);
+    }
+    //Give the remaining bytes the 0xAA value in memory as a default for helping with debugging.
+    //0xAA most likely means uninitialized memory in this case
+    for (int i = 0x200; i < this->MEMORY_SIZE_IN_BYTES; i++)
+    {
+        memory[i] = 0xFF;
     }
 }
 
