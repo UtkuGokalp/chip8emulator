@@ -149,7 +149,10 @@ void Chip8_CPU::ExecuteNextInstruction()
             pc += 2;
         }
         break;
-    case 0x6000:
+    case 0x6000: //LD Vx, byte
+        uint8_t registerIndex = opcode & 0x0F00;
+        uint8_t value = opcode & 0x00FF;
+        registers[registerIndex] = value;
         break;
     case 0x7000:
         break;
