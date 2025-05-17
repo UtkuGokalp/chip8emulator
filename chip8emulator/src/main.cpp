@@ -1,17 +1,24 @@
+//The ordering of these defines and includes are important
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
+#define OLC_PGEX_SOUND
+#include "olcPGEX_Sound.h"
+
+//After here the usual rules apply, ordering isn't important
 #include <Windows.h>
 #include <winnt.h>
 #include "Chip8HW.h"
 #include <map>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
 private:
-    Chip8_Keyboard keyboard;
     Chip8_Memory ram;
-    Chip8_Registers registers;
     Chip8_Screen screen;
+    Chip8_Keyboard keyboard;
+    Chip8_Registers registers;
 
 public:
     Chip8Emulator() : keyboard(Chip8_Keyboard(*this)), screen(Chip8_Screen(*this))
@@ -19,9 +26,17 @@ public:
         sAppName = "Chip-8 Emulator";
         ram = Chip8_Memory();
         registers = Chip8_Registers();
+        olc::SOUND::InitialiseAudio();
     }
 
 private:
+    static float GenerateBuzzerSound(int channelCount, float timeSinceAppStart, float timeStep)
+    {
+        constexpr float FREQUENCY = 440.0f;
+        constexpr float AMPLITUDE = 0.35f;
+        return AMPLITUDE * sinf(2.0f * M_PI * FREQUENCY * timeSinceAppStart);
+    }
+
     bool OnUserCreate() override
     {
         return true;
@@ -33,7 +48,58 @@ private:
         {
             return false;
         }
+
+        //TODO: Implement instruction execution
+
+        //Handle timers
+        HandleTimerDecrement(Chip8_Registers::TimerRegisterType::DelayTimer, deltaTime);
+        HandleTimerDecrement(Chip8_Registers::TimerRegisterType::SoundTimer, deltaTime);
+        
         return true;
+    }
+
+    bool OnUserDestroy() override
+    {
+        olc::SOUND::DestroyAudio();
+        return true;
+    }
+
+    void HandleTimerDecrement(Chip8_Registers::TimerRegisterType type, float deltaTime)
+    {
+        //decrementTimes[0] is the delay timer.
+        //decrementTimes[1] is the sound timer.
+        //Which index means which register is defined by their order in the Chip8_Registers::TimerRegisterType enum.
+        static float decrementTimes[2] = { Chip8_Registers::TIMER_DECREMENT_RATE, Chip8_Registers::TIMER_DECREMENT_RATE };
+        static bool audioSynthFunctionSet = false;
+        uint8_t registerValue = registers.GetTimerValue(type);
+        if (registerValue > 0)
+        {
+            if (decrementTimes[(int)type] <= 0.0f)
+            {
+                registers.SetTimerValue(type, registerValue - 1);
+                decrementTimes[(int)type] = Chip8_Registers::TIMER_DECREMENT_RATE;
+            }
+            else
+            {
+                decrementTimes[(int)type] -= deltaTime;
+            }
+
+            //Play the buzzer sound for the sound timer
+            if (type == Chip8_Registers::TimerRegisterType::SoundTimer && !audioSynthFunctionSet)
+            {
+                olc::SOUND::SetUserSynthFunction(GenerateBuzzerSound);
+                audioSynthFunctionSet = true;
+            }
+        }
+        else
+        {
+            decrementTimes[(int)type] = Chip8_Registers::TIMER_DECREMENT_RATE;
+            if (type == Chip8_Registers::TimerRegisterType::SoundTimer && audioSynthFunctionSet)
+            {
+                olc::SOUND::SetUserSynthFunction(nullptr);
+                audioSynthFunctionSet = false;
+            }
+        }
     }
 };
 

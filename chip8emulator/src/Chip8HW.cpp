@@ -114,7 +114,6 @@ void Chip8_Registers::SetTimerValue(TimerRegisterType type, uint8_t value)
         soundTimer = value;
         break;
     }
-    //TODO: When the timer registers are non-zero, they should be decremented at a rate of 60Hz.
 }
 
 //KEYBOARD

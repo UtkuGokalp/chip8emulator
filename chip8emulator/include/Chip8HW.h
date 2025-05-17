@@ -76,10 +76,12 @@ public:
 
     enum class TimerRegisterType
     {
-        DelayTimer,
+        DelayTimer = 0,
         SoundTimer,
         COUNT
     };
+
+    static constexpr float TIMER_DECREMENT_RATE = 1.0f / 60.0f;
 
     uint8_t GetGPRegisterValue(Chip8_Registers::RegisterID id);
     void SetGPRegisterValue(Chip8_Registers::RegisterID id, uint8_t value);
@@ -87,7 +89,6 @@ public:
     void SetIRegisterValue(uint16_t value);
     uint8_t GetTimerValue(TimerRegisterType type);
     void SetTimerValue(TimerRegisterType type, uint8_t value);
-
 private:
     //Registers accessible to programs
     uint8_t registers[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program

@@ -29,5 +29,13 @@
     <ClInclude Include="include\Chip8HW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\olcPGEX_Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resources\buzzer_440hz_16ms.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

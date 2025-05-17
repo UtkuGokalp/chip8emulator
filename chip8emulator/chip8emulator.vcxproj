@@ -134,7 +134,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Chip8HW.h" />
+    <ClInclude Include="include\olcPGEX_Sound.h" />
     <ClInclude Include="include\olcPixelGameEngine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resources\buzzer_440hz_16ms.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
