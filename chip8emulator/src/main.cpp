@@ -21,6 +21,9 @@ private:
     Chip8_Screen screen;
     Chip8_Memory ram;
     Chip8_CPU cpu;
+    int targetFPS = 500;
+    float targetFrameTime = 1.0f / targetFPS;
+    float currentFrameTime = 0.0f;
 
 public:
     Chip8Emulator() :
@@ -59,14 +62,23 @@ private:
             return false;
         }
 
-        cpu.ExecuteNextInstruction();
-        screen.DisplayScreen();
+        if (currentFrameTime >= targetFrameTime)
+        {
+            cpu.ExecuteNextInstruction();
+            screen.DisplayScreen();
 
-        //Handle timers
-        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
-        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
-        
-        return true;
+            //Handle timers
+            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
+            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
+
+            currentFrameTime = 0.0f;
+
+            return true;
+        }
+        else
+        {
+            currentFrameTime += deltaTime;
+        }
     }
 
     bool OnUserDestroy() override
