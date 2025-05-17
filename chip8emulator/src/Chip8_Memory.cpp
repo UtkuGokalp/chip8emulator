@@ -1,6 +1,5 @@
-#include "Chip8HW.h"
+#include "Chip8_Memory.h"
 
-//MEMORY
 Chip8_Memory::Chip8_Memory()
 {
     //Zero out all the memory to initialize it.
@@ -89,86 +88,4 @@ bool Chip8_Memory::LoadROM(const std::string& filepath)
 
     file.read((char*)(memory + 0x200), fileSize);
     return true;
-}
-
-//REGISTERS
-uint8_t Chip8_Registers::GetGPRegisterValue(Chip8_Registers::RegisterID id)
-{
-    return registers[(int)id];
-}
-
-void Chip8_Registers::SetGPRegisterValue(RegisterID id, uint8_t value)
-{
-    registers[(int)id] = value;
-}
-
-uint16_t Chip8_Registers::GetIRegisterValue()
-{
-    return I;
-}
-
-void Chip8_Registers::SetIRegisterValue(uint16_t value)
-{
-    I = value;
-}
-
-uint8_t Chip8_Registers::GetTimerValue(TimerRegisterType type)
-{
-    switch (type)
-    {
-    case TimerRegisterType::DelayTimer:
-        return delayTimer;
-        break;
-    case TimerRegisterType::SoundTimer:
-        return soundTimer;
-        break;
-    }
-    return 0;
-}
-
-void Chip8_Registers::SetTimerValue(TimerRegisterType type, uint8_t value)
-{
-    switch (type)
-    {
-    case TimerRegisterType::DelayTimer:
-        delayTimer = value;
-        break;
-    case TimerRegisterType::SoundTimer:
-        soundTimer = value;
-        break;
-    }
-}
-
-//KEYBOARD
-Chip8_Keyboard::Chip8_Keyboard(const olc::PixelGameEngine& engineInstance) :
-    pgeInstance(engineInstance)
-{
-
-}
-
-olc::HWButton Chip8_Keyboard::GetKeyInfo(Chip8Key key)
-{
-    return pgeInstance.GetKey(keymap[key]);
-}
-
-
-//SCREEN
-Chip8_Screen::Chip8_Screen(olc::PixelGameEngine& instance) : pgeInstance(instance)
-{
-    memset(screen, 0x00, WIDTH * HEIGHT);
-}
-
-void Chip8_Screen::DisplayScreen()
-{
-    for (int y = 0; y < HEIGHT; y++)
-    {
-        for (int x = 0; x < WIDTH; x++)
-        {
-            //IMPORTANT!!!
-            //screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK part is just a placeholder
-            //and is a wrong logic! Change when the other parts of the emulator are able to
-            //support the actual logic.
-            pgeInstance.Draw(x, y, screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK);
-        }
-    }
 }

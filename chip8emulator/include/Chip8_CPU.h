@@ -1,0 +1,55 @@
+#pragma once
+
+#include <cstdint>
+
+class Chip8_CPU
+{
+public:
+    enum class RegisterID
+    {
+        V0 = 0,
+        V1,
+        V2,
+        V3,
+        V4,
+        V5,
+        V6,
+        V7,
+        V8,
+        V9,
+        VA,
+        VB,
+        VC,
+        VD,
+        VE,
+        VF,
+        COUNT
+    };
+
+    enum class TimerRegisterType
+    {
+        DelayTimer = 0,
+        SoundTimer,
+        COUNT
+    };
+
+    static constexpr float TIMER_DECREMENT_RATE = 1.0f / 60.0f;
+
+    uint8_t GetGPRegisterValue(Chip8_CPU::RegisterID id);
+    void SetGPRegisterValue(Chip8_CPU::RegisterID id, uint8_t value);
+    uint16_t GetIRegisterValue();
+    void SetIRegisterValue(uint16_t value);
+    uint8_t GetTimerValue(TimerRegisterType type);
+    void SetTimerValue(TimerRegisterType type, uint8_t value);
+private:
+    //Registers accessible to programs
+    uint8_t cpu[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program
+    uint16_t Iregister; //Used to store memory address
+    uint8_t delayTimer;
+    uint8_t soundTimer;
+
+    //Registers inaccessible to programs
+    uint16_t pc; //Program counter
+    uint8_t sp; //Stack pointer, points to the top of the stack
+    uint16_t stack[16];
+};

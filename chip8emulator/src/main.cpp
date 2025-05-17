@@ -19,14 +19,14 @@ private:
     Chip8_Memory ram;
     Chip8_Screen screen;
     Chip8_Keyboard keyboard;
-    Chip8_Registers registers;
+    Chip8_CPU cpu;
 
 public:
     Chip8Emulator() : keyboard(Chip8_Keyboard(*this)), screen(Chip8_Screen(*this))
     {
         sAppName = "Chip-8 Emulator";
         ram = Chip8_Memory();
-        registers = Chip8_Registers();
+        cpu = Chip8_CPU();
         olc::SOUND::InitialiseAudio();
     }
 
@@ -41,7 +41,7 @@ private:
     bool OnUserCreate() override
     {
         //TODO: Remove the exception throwing and log the error message once logging is implemented.
-        bool result = ram.LoadROM("");
+        bool result = ram.LoadROM("roms/games/Tetris [Fran Dachille, 1991].ch8");
         if (!result)
         {
             throw std::exception("Failed to load ROM. Either the file doesn't exist or is too big.");
@@ -59,8 +59,8 @@ private:
         //TODO: Implement instruction execution
         screen.DisplayScreen();
         //Handle timers
-        HandleTimerDecrement(Chip8_Registers::TimerRegisterType::DelayTimer, deltaTime);
-        HandleTimerDecrement(Chip8_Registers::TimerRegisterType::SoundTimer, deltaTime);
+        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
+        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
         
         return true;
     }
@@ -71,20 +71,20 @@ private:
         return true;
     }
 
-    void HandleTimerDecrement(Chip8_Registers::TimerRegisterType type, float deltaTime)
+    void HandleTimerDecrement(Chip8_CPU::TimerRegisterType type, float deltaTime)
     {
         //decrementTimes[0] is the delay timer.
         //decrementTimes[1] is the sound timer.
         //Which index means which register is defined by their order in the Chip8_Registers::TimerRegisterType enum.
-        static float decrementTimes[2] = { Chip8_Registers::TIMER_DECREMENT_RATE, Chip8_Registers::TIMER_DECREMENT_RATE };
+        static float decrementTimes[2] = { Chip8_CPU::TIMER_DECREMENT_RATE, Chip8_CPU::TIMER_DECREMENT_RATE };
         static bool audioSynthFunctionSet = false;
-        uint8_t registerValue = registers.GetTimerValue(type);
+        uint8_t registerValue = cpu.GetTimerValue(type);
         if (registerValue > 0)
         {
             if (decrementTimes[(int)type] <= 0.0f)
             {
-                registers.SetTimerValue(type, registerValue - 1);
-                decrementTimes[(int)type] = Chip8_Registers::TIMER_DECREMENT_RATE;
+                cpu.SetTimerValue(type, registerValue - 1);
+                decrementTimes[(int)type] = Chip8_CPU::TIMER_DECREMENT_RATE;
             }
             else
             {
@@ -92,7 +92,7 @@ private:
             }
 
             //Play the buzzer sound for the sound timer
-            if (type == Chip8_Registers::TimerRegisterType::SoundTimer && !audioSynthFunctionSet)
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && !audioSynthFunctionSet)
             {
                 olc::SOUND::SetUserSynthFunction(GenerateBuzzerSound);
                 audioSynthFunctionSet = true;
@@ -100,8 +100,8 @@ private:
         }
         else
         {
-            decrementTimes[(int)type] = Chip8_Registers::TIMER_DECREMENT_RATE;
-            if (type == Chip8_Registers::TimerRegisterType::SoundTimer && audioSynthFunctionSet)
+            decrementTimes[(int)type] = Chip8_CPU::TIMER_DECREMENT_RATE;
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && audioSynthFunctionSet)
             {
                 olc::SOUND::SetUserSynthFunction(nullptr);
                 audioSynthFunctionSet = false;
