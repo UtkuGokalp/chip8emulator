@@ -197,6 +197,10 @@ void Chip8_CPU::ExecuteNextInstruction()
             registers[(int)RegisterID::VF] = (registers[registerIndex1] & 0x80) == 1;
             registers[registerIndex1] <<= 1;
             break;
+        default:
+            //TODO: Change this to log instead of throw
+            throw std::exception("Invalid opcode");
+            break;
         }
         break;
     case 0x9000: //SNE Vx, Vy
@@ -237,6 +241,10 @@ void Chip8_CPU::ExecuteNextInstruction()
             {
                 pc += 2;
             }
+            break;
+        default:
+            //TODO: Change this to log instead of throw
+            throw std::exception("Invalid opcode");
             break;
         }
         break;
