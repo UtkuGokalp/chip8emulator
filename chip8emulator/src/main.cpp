@@ -50,7 +50,7 @@ private:
         }
 
         //TODO: Implement instruction execution
-
+        screen.DisplayScreen();
         //Handle timers
         HandleTimerDecrement(Chip8_Registers::TimerRegisterType::DelayTimer, deltaTime);
         HandleTimerDecrement(Chip8_Registers::TimerRegisterType::SoundTimer, deltaTime);

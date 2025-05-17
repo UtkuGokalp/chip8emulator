@@ -159,10 +159,12 @@ public:
     //Apparently there are other resolutions but just support the og resolution right now.
     static constexpr int WIDTH  = 64;
     static constexpr int HEIGHT = 32;
+
 private:
     uint8_t screen[WIDTH * HEIGHT];
-    const olc::PixelGameEngine& pgeInstance;
+    olc::PixelGameEngine& pgeInstance;
 
 public:
-    Chip8_Screen(const olc::PixelGameEngine& instance);
+    Chip8_Screen(olc::PixelGameEngine& instance);
+    void DisplayScreen();
 };
