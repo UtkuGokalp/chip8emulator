@@ -31,6 +31,7 @@ private:
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
+    Chip8_Memory ram;
     Renderer renderer;
     if (renderer.Construct(Chip8_Screen::WIDTH, Chip8_Screen::HEIGHT, 10, 10))
     {

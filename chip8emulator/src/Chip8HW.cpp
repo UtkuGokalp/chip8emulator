@@ -3,6 +3,9 @@
 //MEMORY
 Chip8_Memory::Chip8_Memory()
 {
+    //Zero out all the memory to initialize it.
+    memset(memory, 0x00, MEMORY_SIZE_IN_BYTES);
+
     //Load the hexadecimal digits into the memory, in locations 0x000 to 0x1FF
     uint8_t hexDigits[16][5] =
     {
