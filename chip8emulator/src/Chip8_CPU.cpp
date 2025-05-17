@@ -142,19 +142,22 @@ void Chip8_CPU::ExecuteNextInstruction()
         }
         break;
     case 0x5000: //SE Vx, Vy
-        uint8_t registerIndex1 = opcode & 0x0F00;
-        uint8_t registerIndex2 = opcode & 0x00F0;
+        uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
+        uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
         if (registers[registerIndex1] == registers[registerIndex2])
         {
             pc += 2;
         }
         break;
     case 0x6000: //LD Vx, byte
-        uint8_t registerIndex = opcode & 0x0F00;
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
         uint8_t value = opcode & 0x00FF;
         registers[registerIndex] = value;
         break;
-    case 0x7000:
+    case 0x7000: //ADD Vx, byte
+        uint8_t value = opcode & 0x00FF;
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        registers[registerIndex] += value;
         break;
     case 0x8000:
         break;
