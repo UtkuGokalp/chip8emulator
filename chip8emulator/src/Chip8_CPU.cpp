@@ -114,6 +114,7 @@ void Chip8_CPU::ExecuteNextInstruction()
         }
         break;
     case 0x1000:
+        pc = opcode & 0x0FFF;
         break;
     case 0x2000:
         break;
