@@ -162,6 +162,12 @@ void Chip8_CPU::ExecuteNextInstruction()
     case 0x8000:
         break;
     case 0x9000:
+        uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
+        uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
+        if (registers[registerIndex1] != registers[registerIndex2])
+        {
+            pc += 2;
+        }
         break;
     case 0xA000:
         break;
