@@ -133,7 +133,13 @@ void Chip8_CPU::ExecuteNextInstruction()
             pc += 2;
         }
         break;
-    case 0x4000:
+    case 0x4000: //SNE Vx, byte
+        uint8_t value = opcode & 0x00FF;
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        if (registers[registerIndex] != value)
+        {
+            pc += 2;
+        }
         break;
     case 0x5000:
         break;
