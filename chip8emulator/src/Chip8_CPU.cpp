@@ -96,7 +96,7 @@ void Chip8_CPU::ExecuteNextInstruction()
     ram.GetMemory(pc, firstOpcodeByte);
     ram.GetMemory(pc + 1, secondOpcodeByte);
     uint16_t opcode = (firstOpcodeByte << 8) | secondOpcodeByte;
-    
+
     //Increment the program counter to fetch the next instruction next time this function is called.
     pc += 2;
 
@@ -125,7 +125,13 @@ void Chip8_CPU::ExecuteNextInstruction()
         stack[sp] = pc;
         pc = opcode & 0x0FFF;
         break;
-    case 0x3000:
+    case 0x3000: //SE Vx, byte
+        uint8_t value = opcode & 0x00FF;
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        if (registers[registerIndex] == value)
+        {
+            pc += 2;
+        }
         break;
     case 0x4000:
         break;
