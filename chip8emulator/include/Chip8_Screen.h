@@ -17,4 +17,5 @@ private:
 public:
     Chip8_Screen(olc::PixelGameEngine& instance);
     void DisplayScreen();
+    void ClearScreen();
 };

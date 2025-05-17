@@ -19,3 +19,8 @@ void Chip8_Screen::DisplayScreen()
         }
     }
 }
+
+void Chip8_Screen::ClearScreen()
+{
+    memset(screen, 0x00, WIDTH * HEIGHT);
+}

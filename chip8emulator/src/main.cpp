@@ -58,8 +58,9 @@ private:
             return false;
         }
 
-        //TODO: Implement instruction execution
+        cpu.ExecuteNextInstruction();
         screen.DisplayScreen();
+
         //Handle timers
         HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
         HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);

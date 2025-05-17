@@ -2,9 +2,11 @@
 
 
 #include <cstdint>
-#include <Chip8_Keyboard.h>
+#include <exception>
+#include <stack>
 #include <Chip8_Memory.h>
 #include <Chip8_Screen.h>
+#include <Chip8_Keyboard.h>
 
 class Chip8_CPU
 {
@@ -46,7 +48,7 @@ public:
     void SetIRegisterValue(uint16_t value);
     uint8_t GetTimerValue(TimerRegisterType type);
     void SetTimerValue(TimerRegisterType type, uint8_t value);
-
+    void ExecuteNextInstruction();
 private:
     //Registers accessible to programs
     uint8_t registers[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program
@@ -57,8 +59,14 @@ private:
     //Registers inaccessible to programs
     uint16_t pc; //Program counter
     uint8_t sp; //Stack pointer, points to the top of the stack
-    uint16_t stack[16];
+    uint16_t stack[16]; //stack[0] is at the bottom of the stack. stack[15] is at the top.
     Chip8_Keyboard& keyboard;
     Chip8_Memory& ram;
     Chip8_Screen& screen;
+
+    static constexpr int MIN_STACK_INDEX = 0;
+    static constexpr int MAX_STACK_INDEX = 15;
+
+    bool IncreaseStackPointer();
+    bool DecreaseStackPointer();
 };
