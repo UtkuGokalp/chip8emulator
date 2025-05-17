@@ -170,6 +170,7 @@ void Chip8_CPU::ExecuteNextInstruction()
         }
         break;
     case 0xA000:
+        Iregister = opcode & 0x0FFF;
         break;
     case 0xB000:
         break;
