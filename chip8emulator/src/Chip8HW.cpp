@@ -128,3 +128,10 @@ olc::HWButton Chip8_Keyboard::GetKeyInfo(Chip8Key key)
 {
     return pgeInstance.GetKey(keymap[key]);
 }
+
+
+//SCREEN
+Chip8_Screen::Chip8_Screen(const olc::PixelGameEngine& instance) : pgeInstance(instance)
+{
+    memset(screen, 0x00, WIDTH * HEIGHT);
+}

@@ -14,12 +14,11 @@ private:
     Chip8_Screen screen;
 
 public:
-    Chip8Emulator() : keyboard(Chip8_Keyboard(*this))
+    Chip8Emulator() : keyboard(Chip8_Keyboard(*this)), screen(Chip8_Screen(*this))
     {
         sAppName = "Chip-8 Emulator";
         ram = Chip8_Memory();
         registers = Chip8_Registers();
-        screen = Chip8_Screen();
     }
 
 private:
