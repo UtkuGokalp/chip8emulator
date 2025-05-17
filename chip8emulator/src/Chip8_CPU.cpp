@@ -176,6 +176,9 @@ void Chip8_CPU::ExecuteNextInstruction()
         pc = registers[(int)RegisterID::V0] + (opcode & 0x0FFF);
         break;
     case 0xC000:
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        uint8_t value = opcode & 0x00FF;
+        registers[registerIndex] = (rand() % 256) & value;
         break;
     case 0xD000:
         break;

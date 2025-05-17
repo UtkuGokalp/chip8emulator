@@ -12,6 +12,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <exception>
+#include <cstdlib>
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
@@ -115,6 +116,7 @@ private:
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
+    srand(time(NULL));
     Chip8Emulator emulator;
     if (emulator.Construct(Chip8_Screen::WIDTH, Chip8_Screen::HEIGHT, 10, 10))
     {

@@ -2,9 +2,10 @@
 #pragma once
 
 
+#include <stack>
+#include <cstdlib>
 #include <cstdint>
 #include <exception>
-#include <stack>
 #include <Chip8_Memory.h>
 #include <Chip8_Screen.h>
 #include <Chip8_Keyboard.h>
