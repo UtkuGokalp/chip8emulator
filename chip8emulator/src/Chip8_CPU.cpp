@@ -141,7 +141,13 @@ void Chip8_CPU::ExecuteNextInstruction()
             pc += 2;
         }
         break;
-    case 0x5000:
+    case 0x5000: //SE Vx, Vy
+        uint8_t registerIndex1 = opcode & 0x0F00;
+        uint8_t registerIndex2 = opcode & 0x00F0;
+        if (registers[registerIndex1] == registers[registerIndex2])
+        {
+            pc += 2;
+        }
         break;
     case 0x6000:
         break;
