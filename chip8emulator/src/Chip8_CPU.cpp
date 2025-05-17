@@ -69,6 +69,8 @@ bool Chip8_CPU::IncreaseStackPointer()
     if (sp > MAX_STACK_INDEX)
     {
         sp = MAX_STACK_INDEX;
+        //TODO: Replace exception throwing with logging.
+        throw std::exception("Stack pointer exceeded maximum stack index");
         return false;
     }
     return true;
@@ -80,6 +82,8 @@ bool Chip8_CPU::DecreaseStackPointer()
     if (sp < MIN_STACK_INDEX)
     {
         sp = MIN_STACK_INDEX;
+        //TODO: Replace exception throwing with logging.
+        throw std::exception("Stack pointer exceeded minimum stack index");
         return false;
     }
     return true;
@@ -113,10 +117,13 @@ void Chip8_CPU::ExecuteNextInstruction()
             break;
         }
         break;
-    case 0x1000:
+    case 0x1000: //JP addr
         pc = opcode & 0x0FFF;
         break;
-    case 0x2000:
+    case 0x2000: //CALL addr
+        IncreaseStackPointer();
+        stack[sp] = pc;
+        pc = opcode & 0x0FFF;
         break;
     case 0x3000:
         break;
