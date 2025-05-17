@@ -249,6 +249,52 @@ void Chip8_CPU::ExecuteNextInstruction()
         }
         break;
     case 0xF000:
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        switch (opcode & 0x00FF)
+        {
+        case 0x07: //LD Vx, DT
+            registers[registerIndex] = GetTimerValue(TimerRegisterType::DelayTimer);
+            break;
+        case 0x0A: //LD Vx, K
+            Chip8_Keyboard::Chip8Key pressedKey;
+            while (!keyboard.AnyKeyPressed(pressedKey)) { }
+            registers[registerIndex] = (uint8_t)pressedKey;
+            break;
+        case 0x15: //LD DT, Vx
+            SetTimerValue(TimerRegisterType::DelayTimer, registers[registerIndex]);
+            break;
+        case 0x18: //LD ST, Vx
+            SetTimerValue(TimerRegisterType::SoundTimer, registers[registerIndex]);
+            break;
+        case 0x1E: //ADD I, Vx
+            Iregister += registers[registerIndex];
+            break;
+        case 0x29: //LD I, Vx
+            Iregister = ram.GetMemoryLocationForHexDigitFont(registers[registerIndex]);
+            break;
+        case 0x33: //LD B, Vx
+            int decimalValue = registers[registerIndex];
+            ram.SetMemory(Iregister + 0, decimalValue / 100);
+            ram.SetMemory(Iregister + 1, (decimalValue / 10) % 10);
+            ram.SetMemory(Iregister + 2, decimalValue % 10);
+            break;
+        case 0x55: //LD [I], Vx
+            for (int i = 0; i <= registerIndex; i++)
+            {
+                ram.SetMemory(Iregister + i, registers[i]);
+            }
+            break;
+        case 0x65: //LD Vx, [I]
+            for (int i = 0; i <= registerIndex; i++)
+            {
+                ram.GetMemory(Iregister + i, registers[i]);
+            }
+            break;
+        default:
+            //TODO: Log invalid opcode
+            throw std::exception("Invalid opcode");
+            break;
+        }
         break;
     default: //Invalid opcode
         //TODO: Log invalid opcode

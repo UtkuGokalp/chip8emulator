@@ -28,6 +28,7 @@ public:
     };
     Chip8_Keyboard(const olc::PixelGameEngine& engineInstance);
     olc::HWButton GetKeyInfo(Chip8Key key);
+    bool AnyKeyPressed(Chip8Key& key);
 private:
     std::map<Chip8Key, olc::Key> keymap =
     {

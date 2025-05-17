@@ -45,6 +45,12 @@ public:
     RWState GetMemory(uint16_t address, uint8_t& value);
     RWState SetMemory(uint16_t address, uint8_t value);
     bool LoadROM(const std::string& filepath);
+    // Returns 0xFFFF if digit isn't a value digit
+    uint16_t GetMemoryLocationForHexDigitFont(uint8_t digit);
 private:
+    //Starting to load the font data from memory location 0x050
+    //is a common choice for Chip8 emulators. It leaves room
+    //for other interpreter variables.
+    static constexpr uint8_t FONT_DATA_START_OFFSET = 0x050;
     uint8_t memory[MEMORY_SIZE_IN_BYTES] = { 0 };
 };

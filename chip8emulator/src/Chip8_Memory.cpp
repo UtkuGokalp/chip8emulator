@@ -27,10 +27,7 @@ Chip8_Memory::Chip8_Memory()
     };
     for (int i = 0; i < 16; i++)
     {
-        //Starting to load the font data from memory location 0x050
-        //is a common choice for Chip8 emulators. It leaves room
-        //for other interpreter variables.
-        uint8_t offset = (sizeof(uint8_t) * 5 * i) + 0x050;
+        uint8_t offset = (sizeof(uint8_t) * 5 * i) + FONT_DATA_START_OFFSET;
         memcpy(memory + offset, hexDigits[i], sizeof(uint8_t) * 5);
     }
     //Give the remaining bytes the 0xAA value in memory as a default for helping with debugging.
@@ -39,6 +36,15 @@ Chip8_Memory::Chip8_Memory()
     {
         memory[i] = 0xFF;
     }
+}
+
+uint16_t Chip8_Memory::GetMemoryLocationForHexDigitFont(uint8_t digit)
+{
+    if (digit > 0xF)
+    {
+        return 0xFFFF;
+    }
+    return (sizeof(uint8_t) * 5 * digit) + FONT_DATA_START_OFFSET;
 }
 
 Chip8_Memory::RWState Chip8_Memory::GetMemory(uint16_t address, uint8_t& value)
