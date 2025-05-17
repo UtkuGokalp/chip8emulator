@@ -160,6 +160,44 @@ void Chip8_CPU::ExecuteNextInstruction()
         registers[registerIndex] += value;
         break;
     case 0x8000:
+        switch (opcode & 0x000F)
+        {
+            uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
+            uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
+        case 0x0: //LD Vx, Vy
+            registers[registerIndex1] = registers[registerIndex2];
+            break;
+        case 0x1: //OR Vx, Vy
+            registers[registerIndex1] |= registers[registerIndex2];
+            break;
+        case 0x2: //AND Vx, Vy
+            registers[registerIndex1] &= registers[registerIndex2];
+            break;
+        case 0x3: //XOR Vx, Vy
+            registers[registerIndex1] ^= registers[registerIndex2];
+            break;
+        case 0x4: //ADD Vx, Vy
+            uint16_t result = registers[registerIndex1] + registers[registerIndex2];
+            registers[(int)RegisterID::VF] = (result > 0xFF) ? 1 : 0;
+            registers[registerIndex1] = result & 0xFF; // keep only the lowest 8 bits
+            break;
+        case 0x5: //SUB Vx, Vy
+            registers[(int)RegisterID::VF] = registers[registerIndex1] >= registers[registerIndex2];
+            registers[registerIndex1] -= registers[registerIndex2];
+            break;
+        case 0x6: //SHR Vx {, Vy}
+            registers[(int)RegisterID::VF] = (registers[registerIndex1] & 0x01) == 1;
+            registers[registerIndex1] >>= 1;
+            break;
+        case 0x7: //SUBN Vx, Vy
+            registers[(int)RegisterID::VF] = registers[registerIndex2] >= registers[registerIndex1];
+            registers[registerIndex1] = registers[registerIndex2] - registers[registerIndex1];
+            break;
+        case 0xE: //SHL Vx {, Vy}
+            registers[(int)RegisterID::VF] = (registers[registerIndex1] & 0x80) == 1;
+            registers[registerIndex1] <<= 1;
+            break;
+        }
         break;
     case 0x9000: //SNE Vx, Vy
         uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
@@ -172,15 +210,15 @@ void Chip8_CPU::ExecuteNextInstruction()
     case 0xA000: //LD I, addr
         Iregister = opcode & 0x0FFF;
         break;
-    case 0xB000:
+    case 0xB000: //JP V0, addr
         pc = registers[(int)RegisterID::V0] + (opcode & 0x0FFF);
         break;
-    case 0xC000:
+    case 0xC000: //RND Vx, byte
         uint8_t registerIndex = (opcode & 0x0F00) >> 8;
         uint8_t value = opcode & 0x00FF;
         registers[registerIndex] = (rand() % 256) & value;
         break;
-    case 0xD000:
+    case 0xD000: //DRW Vx, Vy, nibble
         break;
     case 0xE000:
         uint8_t registerIndex = (opcode & 0x0F00) >> 8;
@@ -188,13 +226,13 @@ void Chip8_CPU::ExecuteNextInstruction()
         olc::HWButton info = keyboard.GetKeyInfo((Chip8_Keyboard::Chip8Key)registerValue);
         switch (opcode & 0x00FF)
         {
-        case 0x009E:
+        case 0x009E: //SKP Vx
             if (info.bHeld)
             {
                 pc += 2;
             }
             break;
-        case 0x00A1:
+        case 0x00A1: //SKNP Vx
             if (info.bReleased)
             {
                 pc += 2;
