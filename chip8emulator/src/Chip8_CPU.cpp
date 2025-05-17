@@ -161,7 +161,7 @@ void Chip8_CPU::ExecuteNextInstruction()
         break;
     case 0x8000:
         break;
-    case 0x9000:
+    case 0x9000: //SNE Vx, Vy
         uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
         uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
         if (registers[registerIndex1] != registers[registerIndex2])
@@ -169,10 +169,11 @@ void Chip8_CPU::ExecuteNextInstruction()
             pc += 2;
         }
         break;
-    case 0xA000:
+    case 0xA000: //LD I, addr
         Iregister = opcode & 0x0FFF;
         break;
     case 0xB000:
+        pc = registers[(int)RegisterID::V0] + (opcode & 0x0FFF);
         break;
     case 0xC000:
         break;
