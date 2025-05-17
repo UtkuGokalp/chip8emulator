@@ -44,6 +44,7 @@ public:
     Chip8_Memory();
     RWState GetMemory(uint16_t address, uint8_t& value);
     RWState SetMemory(uint16_t address, uint8_t value);
+    bool LoadROM(const std::string& filepath);
 private:
     uint8_t memory[MEMORY_SIZE_IN_BYTES] = { 0 };
 };

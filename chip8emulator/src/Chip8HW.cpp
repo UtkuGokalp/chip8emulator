@@ -67,6 +67,29 @@ Chip8_Memory::RWState Chip8_Memory::SetMemory(uint16_t address, uint8_t value)
     }
 }
 
+bool Chip8_Memory::LoadROM(const std::string& filepath)
+{
+    //TODO: Implement error logging
+    //std::ios::ate immediately jumps to the end of the file upon opening
+    //this way we don't have to do that explicitly below when computing
+    //the size of the file
+    std::ifstream file(filepath, std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+    {
+        return false;
+    }
+    std::streamsize fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // ROMs must fit into available memory from 0x200 to end
+    if (fileSize > (MEMORY_SIZE_IN_BYTES - 0x200))
+    {
+        return false;
+    }
+
+    file.read((char*)(memory + 0x200), fileSize);
+    return true;
+}
 
 //REGISTERS
 uint8_t Chip8_Registers::GetGPRegisterValue(Chip8_Registers::RegisterID id)

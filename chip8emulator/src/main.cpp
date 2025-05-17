@@ -11,6 +11,7 @@
 #include <map>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <exception>
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
@@ -39,7 +40,13 @@ private:
 
     bool OnUserCreate() override
     {
-        return true;
+        //TODO: Remove the exception throwing and log the error message once logging is implemented.
+        bool result = ram.LoadROM("");
+        if (!result)
+        {
+            throw std::exception("Failed to load ROM. Either the file doesn't exist or is too big.");
+        }
+        return result;
     }
 
     bool OnUserUpdate(float deltaTime) override
