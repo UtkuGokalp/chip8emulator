@@ -16,17 +16,19 @@
 class Chip8Emulator : public olc::PixelGameEngine
 {
 private:
-    Chip8_Memory ram;
-    Chip8_Screen screen;
     Chip8_Keyboard keyboard;
+    Chip8_Screen screen;
+    Chip8_Memory ram;
     Chip8_CPU cpu;
 
 public:
-    Chip8Emulator() : keyboard(Chip8_Keyboard(*this)), screen(Chip8_Screen(*this))
+    Chip8Emulator() :
+        keyboard(Chip8_Keyboard(*this)),
+        screen(Chip8_Screen(*this)),
+        ram(Chip8_Memory()),
+        cpu(Chip8_CPU(keyboard, ram, screen))
     {
         sAppName = "Chip-8 Emulator";
-        ram = Chip8_Memory();
-        cpu = Chip8_CPU();
         olc::SOUND::InitialiseAudio();
     }
 

@@ -1,6 +1,10 @@
 #pragma once
 
+
 #include <cstdint>
+#include <Chip8_Keyboard.h>
+#include <Chip8_Memory.h>
+#include <Chip8_Screen.h>
 
 class Chip8_CPU
 {
@@ -35,15 +39,17 @@ public:
 
     static constexpr float TIMER_DECREMENT_RATE = 1.0f / 60.0f;
 
+    Chip8_CPU(Chip8_Keyboard& keyboard, Chip8_Memory& ram, Chip8_Screen& screen);
     uint8_t GetGPRegisterValue(Chip8_CPU::RegisterID id);
     void SetGPRegisterValue(Chip8_CPU::RegisterID id, uint8_t value);
     uint16_t GetIRegisterValue();
     void SetIRegisterValue(uint16_t value);
     uint8_t GetTimerValue(TimerRegisterType type);
     void SetTimerValue(TimerRegisterType type, uint8_t value);
+
 private:
     //Registers accessible to programs
-    uint8_t cpu[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program
+    uint8_t registers[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program
     uint16_t Iregister; //Used to store memory address
     uint8_t delayTimer;
     uint8_t soundTimer;
@@ -52,4 +58,7 @@ private:
     uint16_t pc; //Program counter
     uint8_t sp; //Stack pointer, points to the top of the stack
     uint16_t stack[16];
+    Chip8_Keyboard& keyboard;
+    Chip8_Memory& ram;
+    Chip8_Screen& screen;
 };
