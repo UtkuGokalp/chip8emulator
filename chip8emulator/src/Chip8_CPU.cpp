@@ -183,6 +183,24 @@ void Chip8_CPU::ExecuteNextInstruction()
     case 0xD000:
         break;
     case 0xE000:
+        uint8_t registerIndex = (opcode & 0x0F00) >> 8;
+        uint8_t registerValue = registers[registerIndex];
+        olc::HWButton info = keyboard.GetKeyInfo((Chip8_Keyboard::Chip8Key)registerValue);
+        switch (opcode & 0x00FF)
+        {
+        case 0x009E:
+            if (info.bHeld)
+            {
+                pc += 2;
+            }
+            break;
+        case 0x00A1:
+            if (info.bReleased)
+            {
+                pc += 2;
+            }
+            break;
+        }
         break;
     case 0xF000:
         break;
