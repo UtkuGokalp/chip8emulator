@@ -21,16 +21,18 @@ private:
     Chip8_Screen screen;
     Chip8_Memory ram;
     Chip8_CPU cpu;
+    const std::string& romPath;
     int targetFPS = 3000;
     float targetFrameTime = 1.0f / targetFPS;
     float currentFrameTime = 0.0f;
 
 public:
-    Chip8Emulator() :
+    Chip8Emulator(const std::string& romPath) :
         keyboard(Chip8_Keyboard(*this)),
         screen(Chip8_Screen(*this)),
         ram(Chip8_Memory()),
-        cpu(Chip8_CPU(keyboard, ram, screen))
+        cpu(Chip8_CPU(keyboard, ram, screen)),
+        romPath(romPath)
     {
         sAppName = "Chip-8 Emulator";
         olc::SOUND::InitialiseAudio();
@@ -47,7 +49,7 @@ private:
     bool OnUserCreate() override
     {
         //TODO: Remove the exception throwing and log the error message once logging is implemented.
-        bool result = ram.LoadROM("roms/demos/Zero Demo [zeroZshadow, 2007].ch8");
+        bool result = ram.LoadROM(romPath);
         if (!result)
         {
             throw std::exception("Failed to load ROM. Either the file doesn't exist or is too big.");
@@ -129,7 +131,8 @@ private:
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
     srand(time(NULL));
-    Chip8Emulator emulator;
+    std::string path = std::string(lpCmdLine);
+    Chip8Emulator emulator = Chip8Emulator(path);
     if (emulator.Construct(Chip8_Screen::WIDTH, Chip8_Screen::HEIGHT, 10, 10))
     {
         emulator.Start();
