@@ -4,7 +4,7 @@ namespace Chip8EmulatorLauncher
 {
     public partial class Form1 : Form
     {
-        private const string EXECUTABLE_PATH = "C:\\Users\\utkug\\source\\repos\\chip8emulator\\x64\\Debug\\chip8emulator.exe";
+        private const string EXECUTABLE_PATH = "..\\..\\..\\..\\x64\\Debug\\chip8emulator.exe";
         private Dictionary<string, string> demosNameToPath = new Dictionary<string, string>();
         private Dictionary<string, string> gamesNameToPath = new Dictionary<string, string>();
         private Dictionary<string, string> hiresNameToPath = new Dictionary<string, string>();
@@ -18,7 +18,7 @@ namespace Chip8EmulatorLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            const string ROOT_PATH = "C:\\Users\\utkug\\source\\repos\\chip8emulator\\chip8emulator\\roms\\";
+            const string ROOT_PATH = "..\\..\\..\\..\\chip8emulator\\roms";
             string[] folderNames = { "demos", "games", "hires", "programs" };
             ComboBox[] cbxs = { cbxDemos, cbxGames, cbxHires, cbxPrograms };
             Dictionary<string, string>[] dictionaries = { demosNameToPath, gamesNameToPath, hiresNameToPath, programsNameToPath };
