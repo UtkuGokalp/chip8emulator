@@ -133,6 +133,7 @@
     <ClCompile Include="src\Chip8_Keyboard.cpp" />
     <ClCompile Include="src\Chip8_Memory.cpp" />
     <ClCompile Include="src\Chip8_Screen.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="include\Chip8_Keyboard.h" />
     <ClInclude Include="include\Chip8_Memory.h" />
     <ClInclude Include="include\Chip8_Screen.h" />
+    <ClInclude Include="include\Logger.h" />
     <ClInclude Include="include\olcPGEX_Sound.h" />
     <ClInclude Include="include\olcPixelGameEngine.h" />
   </ItemGroup>
