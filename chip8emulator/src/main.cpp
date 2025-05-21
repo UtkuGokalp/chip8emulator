@@ -21,7 +21,7 @@ private:
     Chip8_Screen screen;
     Chip8_Memory ram;
     Chip8_CPU cpu;
-    int targetFPS = 500;
+    int targetFPS = 3000;
     float targetFrameTime = 1.0f / targetFPS;
     float currentFrameTime = 0.0f;
 
@@ -47,7 +47,7 @@ private:
     bool OnUserCreate() override
     {
         //TODO: Remove the exception throwing and log the error message once logging is implemented.
-        bool result = ram.LoadROM("roms/games/Tetris [Fran Dachille, 1991].ch8");
+        bool result = ram.LoadROM("roms/demos/Zero Demo [zeroZshadow, 2007].ch8");
         if (!result)
         {
             throw std::exception("Failed to load ROM. Either the file doesn't exist or is too big.");
