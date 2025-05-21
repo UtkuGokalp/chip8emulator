@@ -17,8 +17,7 @@ public:
     {
         LOGSEVERITY_INFO,
         LOGSEVERITY_WARNING,
-        LOGSEVERITY_ERROR,
-        LOGSEVERITY_COUNT
+        LOGSEVERITY_ERROR
     };
     static void SetLogFilePath(const std::string& newFilePath);
     static void Log(const std::string& info, Logger::LogSeverity severity, bool flushToFileImmediately = true);

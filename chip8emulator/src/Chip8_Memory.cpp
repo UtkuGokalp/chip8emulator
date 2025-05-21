@@ -74,7 +74,6 @@ Chip8_Memory::RWState Chip8_Memory::SetMemory(uint16_t address, uint8_t value)
 
 bool Chip8_Memory::LoadROM(const std::string& filepath)
 {
-    //TODO: Implement error logging
     //std::ios::ate immediately jumps to the end of the file upon opening
     //this way we don't have to do that explicitly below when computing
     //the size of the file

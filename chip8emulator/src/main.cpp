@@ -48,13 +48,12 @@ private:
 
     bool OnUserCreate() override
     {
-        //TODO: Remove the exception throwing and log the error message once logging is implemented.
-        bool result = ram.LoadROM(romPath);
-        if (!result)
+        if (ram.LoadROM(romPath) == false)
         {
-            throw std::exception("Failed to load ROM. Either the file doesn't exist or is too big.");
+            Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
         }
-        return result;
+        return true;
     }
 
     bool OnUserUpdate(float deltaTime) override
