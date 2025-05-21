@@ -163,6 +163,7 @@
             Controls.Add(btnOpenWorkingDirectory);
             Controls.Add(btnKillInstance);
             Controls.Add(btnLaunch);
+            MaximizeBox = false;
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Chip-8 Emulator Launcher";
