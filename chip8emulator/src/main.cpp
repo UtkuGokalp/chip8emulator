@@ -136,6 +136,6 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     {
         emulator.Start();
     }
-    Logger::GetInstance().Flush(); //Flush all the remaining logs before exiting the program.
+    Logger::Flush(); //Flush all the remaining logs before exiting the program.
     return 0;
 }

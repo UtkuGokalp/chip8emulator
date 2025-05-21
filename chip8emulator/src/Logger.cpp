@@ -1,5 +1,6 @@
 #include "Logger.h"
 
+//Utility
 void ClearFileIfExists(const std::string& filePath)
 {
     std::ofstream testStream = std::ofstream(filePath);
@@ -12,18 +13,35 @@ void ClearFileIfExists(const std::string& filePath)
     }
 }
 
+// PUBLICS
 Logger::Logger(const std::string& logFilePath)
 {
-    SetLogFilePath(logFilePath);
+    SetLogFilePathInternal(logFilePath);
 }
 
+void Logger::SetLogFilePath(const std::string& newFilePath)
+{
+    GetInstance().SetLogFilePathInternal(newFilePath);
+}
+
+void Logger::Log(const std::string& info, Logger::LogSeverity severity, bool flushToFileImmediately)
+{
+    GetInstance().LogInternal(info, severity, flushToFileImmediately);
+}
+
+void Logger::Flush()
+{
+    GetInstance().FlushInternal();
+}
+
+//PRIVATES
 Logger& Logger::GetInstance()
 {
     static Logger logger = Logger("CHIP8_EMU_LOG.txt");
     return logger;
 }
 
-void Logger::SetLogFilePath(const std::string& newFilePath)
+void Logger::SetLogFilePathInternal(const std::string& newFilePath)
 {
     //Don't update if the new file path is the same as the old one.
     if (newFilePath == logFilePath)
@@ -48,7 +66,7 @@ void Logger::SetLogFilePath(const std::string& newFilePath)
     }
 }
 
-void Logger::Log(const std::string& info, Logger::LogSeverity severity, bool flushToFileImmediately)
+void Logger::LogInternal(const std::string& info, Logger::LogSeverity severity, bool flushToFileImmediately)
 {
     std::stringstream logText = std::stringstream();
     switch (severity)
@@ -80,7 +98,7 @@ void Logger::Log(const std::string& info, Logger::LogSeverity severity, bool flu
     }
 }
 
-void Logger::Flush()
+void Logger::FlushInternal()
 {
     if (outputStream.is_open())
     {
