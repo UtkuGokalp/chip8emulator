@@ -38,6 +38,7 @@
             cbxHires = new ComboBox();
             cbxPrograms = new ComboBox();
             btnKillInstance = new Button();
+            btnOpenWorkingDirectory = new Button();
             SuspendLayout();
             // 
             // btnLaunch
@@ -136,11 +137,21 @@
             btnKillInstance.UseVisualStyleBackColor = true;
             btnKillInstance.Click += btnKillInstance_Click;
             // 
+            // btnOpenWorkingDirectory
+            // 
+            btnOpenWorkingDirectory.Location = new Point(31, 268);
+            btnOpenWorkingDirectory.Name = "btnOpenWorkingDirectory";
+            btnOpenWorkingDirectory.Size = new Size(626, 53);
+            btnOpenWorkingDirectory.TabIndex = 1;
+            btnOpenWorkingDirectory.Text = "Open Working Directory";
+            btnOpenWorkingDirectory.UseVisualStyleBackColor = true;
+            btnOpenWorkingDirectory.Click += btnOpenWorkingDirectory_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(679, 274);
+            ClientSize = new Size(679, 332);
             Controls.Add(cbxPrograms);
             Controls.Add(cbxHires);
             Controls.Add(cbxGames);
@@ -149,6 +160,7 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
+            Controls.Add(btnOpenWorkingDirectory);
             Controls.Add(btnKillInstance);
             Controls.Add(btnLaunch);
             Name = "Form1";
@@ -170,5 +182,6 @@
         private ComboBox cbxHires;
         private ComboBox cbxPrograms;
         private Button btnKillInstance;
+        private Button btnOpenWorkingDirectory;
     }
 }

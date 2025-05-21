@@ -171,5 +171,16 @@ namespace Chip8EmulatorLauncher
                 currentProcessInstance = null;
             }
         }
+
+        private void btnOpenWorkingDirectory_Click(object sender, EventArgs e)
+        {
+            string? path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (path == null)
+            {
+                MessageBox.Show("Working directory couldn't be found.");
+                return;
+            }
+            Process.Start("explorer.exe", path);
+        }
     }
 }
