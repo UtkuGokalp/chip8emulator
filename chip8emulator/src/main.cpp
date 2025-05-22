@@ -174,10 +174,14 @@ private:
                 DrawStringDecal(startOffset + position, std::format("{:02X}", value), olc::WHITE, { 0.2f, 0.2f });
             }
         }
-        DrawStringDecal(topLeftPosition + olc::vf2d( 0.5f, 20.5f), "PC", olc::GREEN, { 0.2f, 0.2f });
-        DrawStringDecal(topLeftPosition + olc::vf2d( 4.5f, 20.5f), std::format("{:02X}", cpu.GetProgramCounterValue()), olc::WHITE, { 0.2f, 0.2f });
-        DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 20.5f), "SP", olc::GREEN, { 0.2f, 0.2f });
-        DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 20.5f), std::format("{:02X}", cpu.GetStackPointerValue()), olc::WHITE, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d( 0.5f, 19.0f), "PC", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d( 4.5f, 19.0f), std::format("{:02X}", cpu.GetProgramCounterValue()), olc::WHITE, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 19.0f), "SP", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 19.0f), std::format("{:02X}", cpu.GetStackPointerValue()), olc::WHITE, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d( 0.5f, 21.0f), "DT", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d( 4.5f, 21.0f), std::format("{:02X}", cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::DelayTimer)), olc::WHITE, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 21.0f), "ST", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 21.0f), std::format("{:02X}", cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::SoundTimer)), olc::WHITE, { 0.2f, 0.2f });
 
         //DRAW STACK
         DrawStringDecal(topLeftPosition + olc::vf2d(33.5f, 0.5f), "STACK", olc::DARK_RED, { 0.2f, 0.2f });
