@@ -4,16 +4,30 @@ namespace Chip8EmulatorLauncher
 {
     public partial class Form1 : Form
     {
+        private enum ComboBoxType
+        {
+            Demos,
+            Games,
+            Hires,
+            Programs
+        }
+
         private const string EXECUTABLE_PATH = "..\\..\\..\\..\\x64\\Debug\\chip8emulator.exe";
         private Dictionary<string, string> demosNameToPath = new Dictionary<string, string>();
         private Dictionary<string, string> gamesNameToPath = new Dictionary<string, string>();
         private Dictionary<string, string> hiresNameToPath = new Dictionary<string, string>();
         private Dictionary<string, string> programsNameToPath = new Dictionary<string, string>();
         private volatile Process? currentProcessInstance = null;
+        private Dictionary<ComboBoxType, ComboBox> comboboxes;
 
         public Form1()
         {
             InitializeComponent();
+            comboboxes = new Dictionary<ComboBoxType, ComboBox>();
+            comboboxes.Add(ComboBoxType.Demos, cbxDemos);
+            comboboxes.Add(ComboBoxType.Games, cbxGames);
+            comboboxes.Add(ComboBoxType.Hires, cbxHires);
+            comboboxes.Add(ComboBoxType.Programs, cbxPrograms);
             KeyPreview = true;
             KeyDown += Form1_KeyDown;
         }
@@ -73,7 +87,7 @@ namespace Chip8EmulatorLauncher
 
             if (filePath == string.Empty)
             {
-                MessageBox.Show("Invalid file path! " + filePath);
+                MessageBox.Show("Choose a ROM first.");
                 return;
             }
 
@@ -96,68 +110,44 @@ namespace Chip8EmulatorLauncher
             }
         }
 
+        void ComboBoxSelectedIndexChanged(ComboBoxType type)
+        {
+            int currentIndex = comboboxes[type].SelectedIndex;
+            foreach (var item in comboboxes)
+            {
+                //The current index all the comboboxes will be set to zero in this loop
+                //because setting the SelectedIndex will trigger SelectedIndexChanged event
+                //for all comboboxes
+                //There should be a better design change for this instead of this hacky fix but whatever.
+                if (item.Key != type)
+                {
+                    if (item.Value.Items.Count > 0)
+                    {
+                        item.Value.SelectedIndex = 0;
+                    }
+                }
+            }
+            comboboxes[type].SelectedIndex = currentIndex;
+        }
+
         private void cbxDemos_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxGames.Items.Count > 0)
-            {
-                cbxGames.SelectedIndex = 0;
-            }
-            if (cbxHires.Items.Count > 0)
-            {
-                cbxHires.SelectedIndex = 0;
-            }
-            if (cbxPrograms.Items.Count > 0)
-            {
-                cbxPrograms.SelectedIndex = 0;
-            }
+            ComboBoxSelectedIndexChanged(ComboBoxType.Demos);
         }
 
         private void cbxGames_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxDemos.Items.Count > 0)
-            {
-                cbxDemos.SelectedIndex = 0;
-            }
-            if (cbxHires.Items.Count > 0)
-            {
-                cbxHires.SelectedIndex = 0;
-            }
-            if (cbxPrograms.Items.Count > 0)
-            {
-                cbxPrograms.SelectedIndex = 0;
-            }
+            ComboBoxSelectedIndexChanged(ComboBoxType.Games);
         }
 
         private void cbxHires_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxDemos.Items.Count > 0)
-            {
-                cbxDemos.SelectedIndex = 0;
-            }
-            if (cbxGames.Items.Count > 0)
-            {
-                cbxGames.SelectedIndex = 0;
-            }
-            if (cbxPrograms.Items.Count > 0)
-            {
-                cbxPrograms.SelectedIndex = 0;
-            }
+            ComboBoxSelectedIndexChanged(ComboBoxType.Hires);
         }
 
         private void cbxPrograms_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxDemos.Items.Count > 0)
-            {
-                cbxDemos.SelectedIndex = 0;
-            }
-            if (cbxGames.Items.Count > 0)
-            {
-                cbxGames.SelectedIndex = 0;
-            }
-            if (cbxHires.Items.Count > 0)
-            {
-                cbxHires.SelectedIndex = 0;
-            }
+            ComboBoxSelectedIndexChanged(ComboBoxType.Programs);
         }
 
         private void btnKillInstance_Click(object sender, EventArgs e)
