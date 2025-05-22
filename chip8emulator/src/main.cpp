@@ -13,6 +13,16 @@
 #include <exception>
 #include <cstdlib>
 
+#define MEMORY_VIEW_WIDTH                  Chip8_Screen::WIDTH
+#define MEMORY_VIEW_HEIGHT                 Chip8_Screen::HEIGHT
+
+#define DISASSEMBLY_VIEW_WIDTH             40
+#define DISASSEMBLY_VIEW_HEIGHT            (Chip8_Screen::HEIGHT + MEMORY_VIEW_HEIGHT)
+
+#define CPU_INTERNALS_VIEW_WIDTH           40
+
+
+const olc::Pixel BACKGROUND_COLOR = olc::DARK_GREY;
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
@@ -22,6 +32,7 @@ private:
     Chip8_Memory ram;
     Chip8_CPU cpu;
     const std::string& romPath;
+    bool emulationRunning;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -31,7 +42,8 @@ public:
         cpu(Chip8_CPU(keyboard, ram, screen)),
         romPath(romPath)
     {
-        sAppName = "Chip-8 Emulator";
+        sAppName = "Chip-8 Emulator (PRESS SPACE TO START THE EMULATION)";
+        emulationRunning = false;
         olc::SOUND::InitialiseAudio();
     }
 
@@ -45,6 +57,7 @@ private:
 
     bool OnUserCreate() override
     {
+        Clear(BACKGROUND_COLOR);
         if (ram.LoadROM(romPath) == false)
         {
             Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
@@ -60,16 +73,32 @@ private:
             return false;
         }
 
-        if (!cpu.ExecuteNextInstruction())
+        if (!emulationRunning && GetKey(olc::Key::SPACE).bPressed)
         {
-            Logger::Log("Error during instruction execution! Closing the application.", Logger::LogSeverity::LOGSEVERITY_ERROR);
-            return false;
+            emulationRunning = true;
+            sAppName = "Chip-8 Emulator";
+            return true;
         }
-        screen.DisplayScreen();
 
-        //Handle timers
-        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
-        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
+        if (emulationRunning)
+        {
+            //Tick the CPU
+            if (!cpu.ExecuteNextInstruction())
+            {
+                Logger::Log("Error during instruction execution! Closing the application.", Logger::LogSeverity::LOGSEVERITY_ERROR);
+                return false;
+            }
+
+            //Update the screen
+            screen.DisplayScreen();
+
+            //Handle timers
+            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
+            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
+        }
+        
+
+        
         return true;
     }
 
@@ -124,7 +153,9 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     srand(time(NULL));
     std::string path = std::string(lpCmdLine);
     Chip8Emulator emulator = Chip8Emulator(path);
-    if (emulator.Construct(Chip8_Screen::WIDTH, Chip8_Screen::HEIGHT, 10, 10))
+    if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH + CPU_INTERNALS_VIEW_WIDTH,
+                           Chip8_Screen::HEIGHT + MEMORY_VIEW_HEIGHT,
+                           10, 10))
     {
         emulator.Start();
     }

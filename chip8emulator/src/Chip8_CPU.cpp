@@ -9,11 +9,9 @@ Chip8_CPU::Chip8_CPU(Chip8_Keyboard& keyboard, Chip8_Memory& ram, Chip8_Screen& 
     soundTimer = 0x00;
     pc = 0x200; //Programs will start executing from 0x200
     sp = 0; //Even though this is a pointer, internally it is just an index.
-
-    //Initial values of these registers might need to be changed later on.
+    stack.fill(0);
+    registers.fill(0);
     Iregister = 0x0000;
-    memset(stack, 0x0000, sizeof(uint16_t) * 16); //Stack size is hardcoded, which should be fine since stack size doesn't change.
-    memset(registers, 0x00, sizeof(uint8_t) * (int)RegisterID::COUNT);
 }
 
 uint8_t Chip8_CPU::GetGPRegisterValue(Chip8_CPU::RegisterID id)
@@ -34,6 +32,21 @@ uint16_t Chip8_CPU::GetIRegisterValue()
 void Chip8_CPU::SetIRegisterValue(uint16_t value)
 {
     Iregister = value;
+}
+
+uint16_t Chip8_CPU::GetProgramCounterValue()
+{
+    return pc;
+}
+
+uint8_t Chip8_CPU::GetStackPointerValue()
+{
+    return sp;
+}
+
+const std::array<uint16_t, 16>& Chip8_CPU::GetStack()
+{
+    return stack;
 }
 
 uint8_t Chip8_CPU::GetTimerValue(TimerRegisterType type)
@@ -66,10 +79,10 @@ void Chip8_CPU::SetTimerValue(TimerRegisterType type, uint8_t value)
 bool Chip8_CPU::IncreaseStackPointer()
 {
     sp++;
-    if (sp > MAX_STACK_INDEX)
+    if (sp > stack.size() - 1)
     {
-        sp = MAX_STACK_INDEX;
-        Logger::Log("Stack pointer exceeded maximum stack index", Logger::LogSeverity::LOGSEVERITY_ERROR);
+        sp = stack.size() - 1;
+        Logger::Log("Stack pointer exceeded maximum stack index", Logger::LogSeverity::LOGSEVERITY_WARNING);
         return false;
     }
     return true;
@@ -78,10 +91,10 @@ bool Chip8_CPU::IncreaseStackPointer()
 bool Chip8_CPU::DecreaseStackPointer()
 {
     sp--;
-    if (sp < MIN_STACK_INDEX)
+    if (sp < 0)
     {
-        sp = MIN_STACK_INDEX;
-        Logger::Log("Stack pointer exceeded minimum stack index", Logger::LogSeverity::LOGSEVERITY_ERROR);
+        sp = 0;
+        Logger::Log("Stack pointer exceeded minimum stack index", Logger::LogSeverity::LOGSEVERITY_WARNING);
         return false;
     }
     return true;
@@ -108,7 +121,7 @@ bool Chip8_CPU::ExecuteNextInstruction()
             screen.ClearScreen();
             break;
         case 0x00EE: // RET
-            pc = stack[sp];
+            pc = stack.at(sp);
             DecreaseStackPointer();
             break;
         default:
