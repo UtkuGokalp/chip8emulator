@@ -20,7 +20,7 @@ public:
         LOGSEVERITY_ERROR
     };
     static void SetLogFilePath(const std::string& newFilePath);
-    static void Log(const std::string& info, Logger::LogSeverity severity, bool flushToFileImmediately = true);
+    static void Log(const std::string& info, Logger::LogSeverity severity = Logger::LogSeverity::LOGSEVERITY_INFO, bool flushToFileImmediately = true);
     static void Flush();
 private:
     static Logger& GetInstance();

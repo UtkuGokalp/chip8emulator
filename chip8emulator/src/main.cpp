@@ -48,6 +48,7 @@ private:
 
     bool OnUserCreate() override
     {
+        Logger::Log("Starting to load ROM", Logger::LogSeverity::LOGSEVERITY_INFO);
         if (ram.LoadROM(romPath) == false)
         {
             Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
@@ -71,6 +72,12 @@ private:
             //Handle timers
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
+            std::stringstream ss;
+            ss << "Delay timer: ";
+            ss << (int)cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::DelayTimer);
+            ss << " Sound timer: ";
+            ss << (int)cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::SoundTimer);
+            Logger::Log(ss.str(), Logger::LogSeverity::LOGSEVERITY_INFO);
 
             currentFrameTime = 0.0f;
         }
