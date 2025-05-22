@@ -14,6 +14,16 @@ namespace Chip8EmulatorLauncher
         public Form1()
         {
             InitializeComponent();
+            KeyPreview = true;
+            KeyDown += Form1_KeyDown;
+        }
+
+        private void Form1_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
