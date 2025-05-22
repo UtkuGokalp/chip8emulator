@@ -13,13 +13,11 @@
 #include <exception>
 #include <cstdlib>
 
-#define MEMORY_VIEW_WIDTH                  Chip8_Screen::WIDTH
-#define MEMORY_VIEW_HEIGHT                 Chip8_Screen::HEIGHT
+#define CPU_REGISTERS_VIEW_WIDTH                  Chip8_Screen::WIDTH
+#define CPU_REGISTERS_VIEW_HEIGHT                 24
 
 #define DISASSEMBLY_VIEW_WIDTH             40
 #define DISASSEMBLY_VIEW_HEIGHT            (Chip8_Screen::HEIGHT + MEMORY_VIEW_HEIGHT)
-
-#define CPU_INTERNALS_VIEW_WIDTH           40
 
 
 const olc::Pixel BACKGROUND_COLOR = olc::DARK_GREY;
@@ -52,7 +50,7 @@ private:
     {
         constexpr float FREQUENCY = 440.0f;
         constexpr float AMPLITUDE = 0.35f;
-        return AMPLITUDE * sinf(2.0f * M_PI * FREQUENCY * timeSinceAppStart);
+        return AMPLITUDE * sinf(2.0f * (float)M_PI * FREQUENCY * timeSinceAppStart);
     }
 
     bool OnUserCreate() override
@@ -96,9 +94,9 @@ private:
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
         }
-        
 
-        
+        DrawCPURegisterView();
+
         return true;
     }
 
@@ -145,17 +143,78 @@ private:
             }
         }
     }
+
+    void DrawCPURegisterView()
+    {
+        //Draw the register view
+        olc::vf2d topLeftPosition = { 0, Chip8_Screen::HEIGHT };
+        //DRAW REGISTERS
+        DrawStringDecal(topLeftPosition + 0.5f, "REGISTERS", olc::DARK_RED, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 4.5f), "V0-V3", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 8.5f), "V4-V7", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 12.5f), "V8-VB", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 16.5f), "VC-VF", olc::GREEN, { 0.2f, 0.2f });
+        for (int gridY = 0; gridY < 4; gridY++)
+        {
+            for (int gridX = 0; gridX < 4; gridX++)
+            {
+                constexpr olc::vf2d START_OFFSET = olc::vf2d(6.0f, 2.0f);
+                constexpr olc::vf2d SPACING = olc::vf2d(4.0f, 4.0f);
+                olc::vf2d position =
+                {
+                    topLeftPosition.x + START_OFFSET.x + SPACING.x * gridX,
+                    topLeftPosition.y + START_OFFSET.y + SPACING.y * gridY
+                };
+                olc::vf2d startOffset =
+                {
+                    3.5f,
+                    2.5f
+                };
+                uint8_t value = cpu.GetGPRegisterValue((Chip8_CPU::RegisterID)(gridY * 4 + gridX)); //4 is the max grid width (max gridX)
+                DrawStringDecal(startOffset + position, std::format("{:02X}", value), olc::WHITE, { 0.2f, 0.2f });
+            }
+        }
+        DrawStringDecal(topLeftPosition + olc::vf2d( 0.5f, 20.5f), "PC", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d( 4.5f, 20.5f), std::format("{:02X}", cpu.GetProgramCounterValue()), olc::WHITE, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 20.5f), "SP", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 20.5f), std::format("{:02X}", cpu.GetStackPointerValue()), olc::WHITE, { 0.2f, 0.2f });
+
+        //DRAW STACK
+        DrawStringDecal(topLeftPosition + olc::vf2d(33.5f, 0.5f), "STACK", olc::DARK_RED, { 0.2f, 0.2f });
+        for (int gridX = 0; gridX < 2; gridX++)
+        {
+            for (int gridY = 0; gridY < 8; gridY++)
+            {
+                constexpr olc::vf2d START_OFFSET = olc::vf2d(30.0f, 1.6f);
+                constexpr olc::vf2d SPACING = olc::vf2d(5.0f, 2.5f);
+                olc::vf2d position =
+                {
+                    topLeftPosition.x + START_OFFSET.x + SPACING.x * gridX,
+                    topLeftPosition.y + START_OFFSET.y + SPACING.y * gridY
+                };
+                olc::vf2d startOffset =
+                {
+                    3.5f,
+                    2.5f
+                };
+                uint8_t stackAddress = gridX * 8 + gridY;
+                uint8_t stackValue = cpu.GetValueInStack(stackAddress); //2 is the max grid width (max gridX)
+                DrawStringDecal(olc::vf2d(startOffset.x * (gridX + 1), startOffset.y) + position, std::format("{:02X}", stackAddress), olc::GREEN, { 0.2f, 0.2f });
+                DrawStringDecal(olc::vf2d(startOffset.x * (gridX + 2), startOffset.y) + position, std::format("{:02X}", stackValue), olc::WHITE, { 0.2f, 0.2f });
+            }
+        }
+    }
 };
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
     Logger::Log("=====================LOGGING START=====================");
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     std::string path = std::string(lpCmdLine);
     Chip8Emulator emulator = Chip8Emulator(path);
-    if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH + CPU_INTERNALS_VIEW_WIDTH,
-                           Chip8_Screen::HEIGHT + MEMORY_VIEW_HEIGHT,
-                           10, 10))
+    if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH,
+        Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT,
+        10, 10))
     {
         emulator.Start();
     }

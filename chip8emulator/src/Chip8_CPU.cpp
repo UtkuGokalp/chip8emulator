@@ -44,9 +44,14 @@ uint8_t Chip8_CPU::GetStackPointerValue()
     return sp;
 }
 
-const std::array<uint16_t, 16>& Chip8_CPU::GetStack()
+uint8_t Chip8_CPU::GetValueInStack(uint8_t address)
 {
-    return stack;
+    if (address > stack.size() - 1)
+    {
+        Logger::Log("Address exceeded the stack size!", Logger::LogSeverity::LOGSEVERITY_WARNING);
+        address = stack.size() - 1;
+    }
+    return stack.at(address);
 }
 
 uint8_t Chip8_CPU::GetTimerValue(TimerRegisterType type)

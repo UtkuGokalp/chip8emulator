@@ -53,7 +53,7 @@ public:
     void SetTimerValue(TimerRegisterType type, uint8_t value);
     uint16_t GetProgramCounterValue();
     uint8_t GetStackPointerValue();
-    const std::array<uint16_t, 16>& GetStack();
+    uint8_t GetValueInStack(uint8_t address);
     bool ExecuteNextInstruction();
 private:
     //Registers accessible to programs
