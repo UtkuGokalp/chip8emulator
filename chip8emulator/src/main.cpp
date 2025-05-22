@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 //The ordering of these defines and includes are important
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
