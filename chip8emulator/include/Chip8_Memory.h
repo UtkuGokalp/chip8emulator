@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <Logger.h>
 
 class Chip8_Memory
 {

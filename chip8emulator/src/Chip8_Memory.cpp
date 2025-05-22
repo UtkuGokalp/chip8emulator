@@ -84,7 +84,7 @@ bool Chip8_Memory::LoadROM(const std::string& filepath)
     }
     std::streamsize fileSize = file.tellg();
     file.seekg(0, std::ios::beg);
-
+    
     // ROMs must fit into available memory from 0x200 to end
     if (fileSize > (MEMORY_SIZE_IN_BYTES - 0x200))
     {

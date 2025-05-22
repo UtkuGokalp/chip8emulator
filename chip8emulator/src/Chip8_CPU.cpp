@@ -285,7 +285,7 @@ void Chip8_CPU::ExecuteNextInstruction()
                 pc += 2;
             break;
         case 0x00A1:
-            if (info.bReleased)
+            if (!info.bPressed)
                 pc += 2;
             break;
         default:
@@ -306,8 +306,14 @@ void Chip8_CPU::ExecuteNextInstruction()
         case 0x0A:
         {
             Chip8_Keyboard::Chip8Key pressedKey;
-            while (!keyboard.AnyKeyPressed(pressedKey)) {}
-            registers[registerIndex] = (uint8_t)pressedKey;
+            if (!keyboard.AnyKeyPressed(pressedKey))
+            {
+                pc -= 2;
+            }
+            else
+            {
+                registers[registerIndex] = (uint8_t)pressedKey;
+            }
             break;
         }
         case 0x15:

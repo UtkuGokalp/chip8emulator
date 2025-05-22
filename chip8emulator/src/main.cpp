@@ -1,9 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 //The ordering of these defines and includes are important
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 #define OLC_PGEX_SOUND
 #include "olcPGEX_Sound.h"
-
 //After here the usual rules apply, ordering isn't important
 #include <Windows.h>
 #include <winnt.h>
@@ -13,6 +13,8 @@
 #include <math.h>
 #include <exception>
 #include <cstdlib>
+#include <ctime>
+
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
@@ -48,7 +50,6 @@ private:
 
     bool OnUserCreate() override
     {
-        Logger::Log("Starting to load ROM", Logger::LogSeverity::LOGSEVERITY_INFO);
         if (ram.LoadROM(romPath) == false)
         {
             Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
@@ -72,12 +73,6 @@ private:
             //Handle timers
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
             HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
-            std::stringstream ss;
-            ss << "Delay timer: ";
-            ss << (int)cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::DelayTimer);
-            ss << " Sound timer: ";
-            ss << (int)cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::SoundTimer);
-            Logger::Log(ss.str(), Logger::LogSeverity::LOGSEVERITY_INFO);
 
             currentFrameTime = 0.0f;
         }
@@ -135,6 +130,7 @@ private:
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
+    Logger::Log("=====================LOGGING START=====================");
     srand(time(NULL));
     std::string path = std::string(lpCmdLine);
     Chip8Emulator emulator = Chip8Emulator(path);
@@ -142,6 +138,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     {
         emulator.Start();
     }
+    Logger::Log("=====================LOGGING END=====================");
     Logger::Flush(); //Flush all the remaining logs before exiting the program.
     return 0;
 }
