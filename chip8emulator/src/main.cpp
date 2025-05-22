@@ -12,7 +12,6 @@
 #include <math.h>
 #include <exception>
 #include <cstdlib>
-#include <ctime>
 
 
 class Chip8Emulator : public olc::PixelGameEngine
