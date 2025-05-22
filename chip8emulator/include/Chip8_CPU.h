@@ -50,7 +50,7 @@ public:
     void SetIRegisterValue(uint16_t value);
     uint8_t GetTimerValue(TimerRegisterType type);
     void SetTimerValue(TimerRegisterType type, uint8_t value);
-    void ExecuteNextInstruction();
+    bool ExecuteNextInstruction();
 private:
     //Registers accessible to programs
     uint8_t registers[(int)RegisterID::COUNT]; //V0-VF, VF shouldn't be used by any program

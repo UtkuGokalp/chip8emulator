@@ -87,7 +87,7 @@ bool Chip8_CPU::DecreaseStackPointer()
     return true;
 }
 
-void Chip8_CPU::ExecuteNextInstruction()
+bool Chip8_CPU::ExecuteNextInstruction()
 {
     // Get the opcode from memory
     uint8_t firstOpcodeByte, secondOpcodeByte;
@@ -211,8 +211,8 @@ void Chip8_CPU::ExecuteNextInstruction()
             registers[registerIndex1] <<= 1;
             break;
         default:
-            Logger::Log("Invalid opcode", Logger::LogSeverity::LOGSEVERITY_ERROR);
-            exit(EXIT_FAILURE);
+            Logger::Log(std::format("Invalid opcode: 0x{:04X}", opcode), Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
         }
         break;
     }
@@ -289,8 +289,8 @@ void Chip8_CPU::ExecuteNextInstruction()
                 pc += 2;
             break;
         default:
-            Logger::Log("Invalid opcode", Logger::LogSeverity::LOGSEVERITY_ERROR);
-            exit(EXIT_FAILURE);
+            Logger::Log(std::format("Invalid opcode: 0x{:04X}", opcode), Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
         }
         break;
     }
@@ -345,14 +345,15 @@ void Chip8_CPU::ExecuteNextInstruction()
                 ram.GetMemory(Iregister + i, registers[i]);
             break;
         default:
-            Logger::Log("Invalid opcode", Logger::LogSeverity::LOGSEVERITY_ERROR);
-            exit(EXIT_FAILURE);
+            Logger::Log(std::format("Invalid opcode: 0x{:04X}", opcode), Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
         }
         break;
     }
 
     default:
-        Logger::Log("Invalid opcode", Logger::LogSeverity::LOGSEVERITY_ERROR);
-        exit(EXIT_FAILURE);
+        Logger::Log(std::format("Invalid opcode: 0x{:04X}", opcode), Logger::LogSeverity::LOGSEVERITY_ERROR);
+        return false;
     }
+    return true;
 }

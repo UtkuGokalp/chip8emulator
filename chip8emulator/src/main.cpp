@@ -62,7 +62,11 @@ private:
             return false;
         }
 
-        cpu.ExecuteNextInstruction();
+        if (!cpu.ExecuteNextInstruction())
+        {
+            Logger::Log("Error during instruction execution! Closing the application.", Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
+        }
         screen.DisplayScreen();
 
         //Handle timers
