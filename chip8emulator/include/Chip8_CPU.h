@@ -41,7 +41,7 @@ public:
         COUNT
     };
 
-    static constexpr float TIMER_DECREMENT_RATE = 1.0f / 60.0f;
+    static constexpr float TIMER_DECREMENT_RATE = (1.0f / 60.0f);
 
     Chip8_CPU(Chip8_Keyboard& keyboard, Chip8_Memory& ram, Chip8_Screen& screen);
     uint8_t GetGPRegisterValue(Chip8_CPU::RegisterID id);

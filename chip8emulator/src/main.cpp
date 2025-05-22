@@ -24,9 +24,6 @@ private:
     Chip8_Memory ram;
     Chip8_CPU cpu;
     const std::string& romPath;
-    int targetFPS = 3000;
-    float targetFrameTime = 1.0f / targetFPS;
-    float currentFrameTime = 0.0f;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -65,21 +62,12 @@ private:
             return false;
         }
 
-        if (currentFrameTime >= targetFrameTime)
-        {
-            cpu.ExecuteNextInstruction();
-            screen.DisplayScreen();
+        cpu.ExecuteNextInstruction();
+        screen.DisplayScreen();
 
-            //Handle timers
-            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
-            HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
-
-            currentFrameTime = 0.0f;
-        }
-        else
-        {
-            currentFrameTime += deltaTime;
-        }
+        //Handle timers
+        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::DelayTimer, deltaTime);
+        HandleTimerDecrement(Chip8_CPU::TimerRegisterType::SoundTimer, deltaTime);
         return true;
     }
 
