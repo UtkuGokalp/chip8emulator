@@ -245,7 +245,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     Chip8Emulator emulator = Chip8Emulator(path);
     if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH,
         Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT,
-        10, 10))
+        10, 10, false, true))
     {
         emulator.Start();
     }
