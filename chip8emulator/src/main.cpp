@@ -57,11 +57,27 @@ private:
     bool OnUserCreate() override
     {
         Clear(BACKGROUND_COLOR);
+        Logger::Log(std::format("Loading ROM: {}", romPath));
         if (ram.LoadROM(romPath) == false)
         {
             Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
             return false;
         }
+        Logger::Log("Successfully loaded ROM.");
+
+        for (int i = 0; i < ram.MEMORY_SIZE_IN_BYTES; i += 2)
+        {
+            std::stringstream ss;
+            uint8_t mem1, mem2;
+            ram.GetMemory(i + 0, mem1);
+            ram.GetMemory(i + 1, mem2);
+            ss << std::format("{:03X}: {:02X} {:02X}", i, mem1, mem2);
+            Logger::Log(ss.str());
+        }
+        uint8_t mem;
+        ram.GetMemory(ram.MEMORY_SIZE_IN_BYTES - 1, mem);
+        Logger::Log(std::format("{:03X}: {:02X}", ram.MEMORY_SIZE_IN_BYTES - 1, mem));
+
         return true;
     }
 
@@ -229,7 +245,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     Chip8Emulator emulator = Chip8Emulator(path);
     if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH,
         Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT,
-        10, 10))
+        10, 10, false, true))
     {
         emulator.Start();
     }
