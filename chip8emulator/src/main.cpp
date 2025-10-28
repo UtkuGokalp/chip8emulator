@@ -17,9 +17,12 @@
 #define CPU_REGISTERS_VIEW_WIDTH                  Chip8_Screen::WIDTH
 #define CPU_REGISTERS_VIEW_HEIGHT                 24
 
-#define DISASSEMBLY_VIEW_WIDTH             40
-#define DISASSEMBLY_VIEW_HEIGHT            (Chip8_Screen::HEIGHT + MEMORY_VIEW_HEIGHT)
-
+#define MEMORY_VIEW_WIDTH             45
+#define MEMORY_VIEW_HEIGHT            Chip8_Screen::HEIGHT
+#define MEM_VIEW_ROWS                 8
+#define MEM_VIEW_COLS                 16
+#define BYTES_IN_ONE_PAGE             (MEM_VIEW_ROWS * MEM_VIEW_COLS)
+#define MAX_PAGE_COUNT                ((Chip8_Memory::MEMORY_SIZE_IN_BYTES / BYTES_IN_ONE_PAGE) - 1) //Subtract 1 because initial page is 0, not 1
 
 const olc::Pixel BACKGROUND_COLOR = olc::DARK_GREY;
 
@@ -32,6 +35,7 @@ private:
     Chip8_CPU cpu;
     const std::string& romPath;
     bool emulationRunning;
+    unsigned int pageToDisplay;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -39,7 +43,8 @@ public:
         screen(Chip8_Screen(*this)),
         ram(Chip8_Memory()),
         cpu(Chip8_CPU(keyboard, ram, screen)),
-        romPath(romPath)
+        romPath(romPath),
+        pageToDisplay(0)
     {
         sAppName = "Chip-8 Emulator (PRESS SPACE TO START THE EMULATION)";
         emulationRunning = false;
@@ -65,19 +70,6 @@ private:
         }
         Logger::Log("Successfully loaded ROM.");
 
-        for (int i = 0; i < ram.MEMORY_SIZE_IN_BYTES; i += 2)
-        {
-            std::stringstream ss;
-            uint8_t mem1, mem2;
-            ram.GetMemory(i + 0, mem1);
-            ram.GetMemory(i + 1, mem2);
-            ss << std::format("{:03X}: {:02X} {:02X}", i, mem1, mem2);
-            Logger::Log(ss.str());
-        }
-        uint8_t mem;
-        ram.GetMemory(ram.MEMORY_SIZE_IN_BYTES - 1, mem);
-        Logger::Log(std::format("{:03X}: {:02X}", ram.MEMORY_SIZE_IN_BYTES - 1, mem));
-
         return true;
     }
 
@@ -93,6 +85,21 @@ private:
             emulationRunning = true;
             sAppName = "Chip-8 Emulator";
             return true;
+        }
+
+        if (GetKey(olc::Key::RIGHT).bPressed || GetMouseWheel() < 0) //If right arrow is pressed or if mouse wheel is scrolled down
+        {
+            if (pageToDisplay < MAX_PAGE_COUNT)
+            {
+                pageToDisplay++;
+            }
+        }
+        if (GetKey(olc::Key::LEFT).bPressed || GetMouseWheel() > 0) //If left arrow is pressed or if mouse wheel is scrolled up
+        {
+            if (pageToDisplay > 0) //Smallest page is always 0
+            {
+                pageToDisplay--;
+            }
         }
 
         if (emulationRunning)
@@ -113,7 +120,7 @@ private:
         }
 
         DrawCPURegisterView();
-
+        DrawMemoryView(pageToDisplay);
         return true;
     }
 
@@ -211,7 +218,7 @@ private:
 
         //DRAW STACK
         DrawStringDecal(topLeftPosition + olc::vf2d(33.5f, 0.5f), "STACK", olc::DARK_RED, { 0.2f, 0.2f });
-                
+
         for (int gridX = 0; gridX < 2; gridX++)
         {
             for (int gridY = 0; gridY < 8; gridY++)
@@ -235,6 +242,54 @@ private:
             }
         }
     }
+
+    void DrawMemoryView(unsigned int page)
+    {
+        //Check if page is valid
+        if (page > MAX_PAGE_COUNT)
+        {
+            std::stringstream ss;
+            ss << std::format("Invalid memory page!({}) Defaulting to MAX_PAGE_COUNT ({}).", page, MAX_PAGE_COUNT);
+            Logger::Log(ss.str(), Logger::LogSeverity::LOGSEVERITY_WARNING);
+            //Also setting pageToDisplay to 1 so that the log will happen only once. This is somewhat hacky and not necessarily a good practice.
+            //But I feel like since the page shouldn't be out of bounds in any condition, this can help with an external bug as well. Possibly.
+            //Unless a bigger problem arises, I will keep it this way.
+            pageToDisplay = page = MAX_PAGE_COUNT;
+        }
+
+        //Draw the memory title
+        olc::vf2d memoryTextPosition = { Chip8_Screen::WIDTH + 0.5f, 0.5f }; //0.5f for a little bit of offset
+        std::stringstream memoryViewTitleSS;
+        memoryViewTitleSS << std::format("MEMORY({}/{})", page, MAX_PAGE_COUNT);
+        DrawStringDecal(memoryTextPosition, memoryViewTitleSS.str(), olc::DARK_RED, { 0.2f, 0.2f });
+
+        //Draw the bytes in memory
+        for (int col = 0; col < MEM_VIEW_COLS; col++)
+        {
+            //Display the address
+            std::stringstream ss;
+            //ss << std::format("{:03X}", (page * BYTES_IN_ONE_PAGE) + (row * MEM_VIEW_COLS));
+            ss << std::format("{:03X}", (page * BYTES_IN_ONE_PAGE) + (col * MEM_VIEW_ROWS));
+            DrawStringDecal(memoryTextPosition + olc::vf2d(0.0f, 2.5f + col *2.0f), ss.str(), olc::GREEN, { 0.2f, 0.2f });
+
+            ss.str(""); //Clear the stringstream
+
+            Logger::Log("-----------------------------------------------------------------");
+            //Read the memory and display it
+            for (int row = 0; row < MEM_VIEW_ROWS; row++)
+            {
+                uint8_t memValue;
+                uint16_t address = (page * BYTES_IN_ONE_PAGE) + (col * MEM_VIEW_ROWS) + row;
+                std::stringstream loggerss;
+                loggerss << address;
+                Logger::Log(loggerss.str());
+                ram.GetMemory(address, memValue);
+                ss << std::format(" {:02X}", memValue);
+            }
+            Logger::Log("-----------------------------------------------------------------");
+            DrawStringDecal(memoryTextPosition + olc::vf2d(4.0f, 2.5f + col * 2.0f), ss.str(), olc::WHITE, { 0.2f, 0.2f });
+        }
+    }
 };
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -243,7 +298,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     srand((unsigned int)time(NULL));
     std::string path = std::string(lpCmdLine);
     Chip8Emulator emulator = Chip8Emulator(path);
-    if (emulator.Construct(Chip8_Screen::WIDTH + DISASSEMBLY_VIEW_WIDTH,
+    if (emulator.Construct(Chip8_Screen::WIDTH + MEMORY_VIEW_WIDTH,
         Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT,
         10, 10, false, true))
     {
