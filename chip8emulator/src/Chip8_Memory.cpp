@@ -2,7 +2,7 @@
 
 Chip8_Memory::Chip8_Memory()
 {
-    //Set everything in memory to 0xFF in the beginning so that 0xFF most likely means uninitialized memory
+    //Set everything in memory to 0xFF in the beginning so that 0xFF most likely means uninitialized memory later down the road.
     memset(memory, 0xFF, MEMORY_SIZE_IN_BYTES);
 
     //Load the hexadecimal digits into the memory, in locations 0x000 to 0x1FF
