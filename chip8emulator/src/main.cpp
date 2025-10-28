@@ -35,7 +35,7 @@ private:
     Chip8_CPU cpu;
     const std::string& romPath;
     bool emulationRunning;
-    unsigned int pageToDisplay;
+    unsigned int memoryPageToDisplay;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -44,7 +44,7 @@ public:
         ram(Chip8_Memory()),
         cpu(Chip8_CPU(keyboard, ram, screen)),
         romPath(romPath),
-        pageToDisplay(0)
+        memoryPageToDisplay(0)
     {
         sAppName = "Chip-8 Emulator (PRESS SPACE TO START THE EMULATION)";
         emulationRunning = false;
@@ -89,16 +89,16 @@ private:
 
         if (GetKey(olc::Key::RIGHT).bPressed || GetMouseWheel() < 0) //If right arrow is pressed or if mouse wheel is scrolled down
         {
-            if (pageToDisplay < MAX_PAGE_COUNT)
+            if (memoryPageToDisplay < MAX_PAGE_COUNT)
             {
-                pageToDisplay++;
+                memoryPageToDisplay++;
             }
         }
         if (GetKey(olc::Key::LEFT).bPressed || GetMouseWheel() > 0) //If left arrow is pressed or if mouse wheel is scrolled up
         {
-            if (pageToDisplay > 0) //Smallest page is always 0
+            if (memoryPageToDisplay > 0) //Smallest page is always 0
             {
-                pageToDisplay--;
+                memoryPageToDisplay--;
             }
         }
 
@@ -120,7 +120,7 @@ private:
         }
 
         DrawCPURegisterView();
-        DrawMemoryView(pageToDisplay);
+        DrawMemoryView(memoryPageToDisplay);
         return true;
     }
 
@@ -254,7 +254,7 @@ private:
             //Also setting pageToDisplay to 1 so that the log will happen only once. This is somewhat hacky and not necessarily a good practice.
             //But I feel like since the page shouldn't be out of bounds in any condition, this can help with an external bug as well. Possibly.
             //Unless a bigger problem arises, I will keep it this way.
-            pageToDisplay = page = MAX_PAGE_COUNT;
+            memoryPageToDisplay = page = MAX_PAGE_COUNT;
         }
 
         //Draw the memory title
