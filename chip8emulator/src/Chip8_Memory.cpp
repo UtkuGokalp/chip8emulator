@@ -30,8 +30,8 @@ Chip8_Memory::Chip8_Memory()
         uint8_t offset = (sizeof(uint8_t) * 5 * i) + FONT_DATA_START_OFFSET;
         memcpy(memory + offset, hexDigits[i], sizeof(uint8_t) * 5);
     }
-    //Give the remaining bytes the 0xAA value in memory as a default for helping with debugging.
-    //0xAA most likely means uninitialized memory in this case
+    //Give the remaining bytes the 0xFF value in memory as a default for helping with debugging.
+    //0xFF most likely means uninitialized memory in this case
     for (int i = 0x200; i < this->MEMORY_SIZE_IN_BYTES; i++)
     {
         memory[i] = 0xFF;
