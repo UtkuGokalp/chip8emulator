@@ -2,8 +2,8 @@
 
 Chip8_Memory::Chip8_Memory()
 {
-    //Zero out all the memory to initialize it.
-    memset(memory, 0x00, MEMORY_SIZE_IN_BYTES);
+    //Set everything in memory to 0xFF in the beginning so that 0xFF most likely means uninitialized memory
+    memset(memory, 0xFF, MEMORY_SIZE_IN_BYTES);
 
     //Load the hexadecimal digits into the memory, in locations 0x000 to 0x1FF
     uint8_t hexDigits[16][5] =
@@ -29,12 +29,6 @@ Chip8_Memory::Chip8_Memory()
     {
         uint8_t offset = (sizeof(uint8_t) * 5 * i) + FONT_DATA_START_OFFSET;
         memcpy(memory + offset, hexDigits[i], sizeof(uint8_t) * 5);
-    }
-    //Give the remaining bytes the 0xFF value in memory as a default for helping with debugging.
-    //0xFF most likely means uninitialized memory in this case
-    for (int i = 0x200; i < this->MEMORY_SIZE_IN_BYTES; i++)
-    {
-        memory[i] = 0xFF;
     }
 }
 
