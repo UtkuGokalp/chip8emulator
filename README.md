@@ -12,6 +12,6 @@ The following is a screenshot of the launcher. It is configured so that you can 
 
 ![Launcher](Launcher.jpg)
 
-Finally, the following is a demo of the emulator running the Bitmap Viewer ROM, which can be found under the Programs category. The empty spaces will be used for keyboard and memory visuals.
+Finally, the following is a demo of the emulator running the Bitmap Viewer ROM, which can be found under the Programs category. The remaining empty space will be used for implementing keyboard visuals.
 
 ![EmulatorDemo](BitmapViewer.gif)
