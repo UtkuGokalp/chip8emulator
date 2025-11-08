@@ -24,6 +24,9 @@
 #define BYTES_IN_ONE_PAGE             (MEM_VIEW_ROWS * MEM_VIEW_COLS)
 #define MAX_PAGE_COUNT                ((Chip8_Memory::MEMORY_SIZE_IN_BYTES / BYTES_IN_ONE_PAGE) - 1) //Subtract 1 because initial page is 0, not 1
 
+#define KEYBOARD_VIEW_WIDTH           30
+#define KEYBOARD_VIEW_HEIGHT          35
+
 const olc::Pixel BACKGROUND_COLOR = olc::DARK_GREY;
 
 class Chip8Emulator : public olc::PixelGameEngine
@@ -121,6 +124,7 @@ private:
 
         DrawCPURegisterView();
         DrawMemoryView(memoryPageToDisplay);
+        DrawKeyboardView();
         return true;
     }
 
@@ -268,13 +272,11 @@ private:
         {
             //Display the address
             std::stringstream ss;
-            //ss << std::format("{:03X}", (page * BYTES_IN_ONE_PAGE) + (row * MEM_VIEW_COLS));
             ss << std::format("{:03X}", (page * BYTES_IN_ONE_PAGE) + (col * MEM_VIEW_ROWS));
-            DrawStringDecal(memoryTextPosition + olc::vf2d(0.0f, 2.5f + col *2.0f), ss.str(), olc::GREEN, { 0.2f, 0.2f });
+            DrawStringDecal(memoryTextPosition + olc::vf2d(0.0f, 2.5f + col * 2.0f), ss.str(), olc::GREEN, { 0.2f, 0.2f });
 
             ss.str(""); //Clear the stringstream
 
-            Logger::Log("-----------------------------------------------------------------");
             //Read the memory and display it
             for (int row = 0; row < MEM_VIEW_ROWS; row++)
             {
@@ -282,12 +284,49 @@ private:
                 uint16_t address = (page * BYTES_IN_ONE_PAGE) + (col * MEM_VIEW_ROWS) + row;
                 std::stringstream loggerss;
                 loggerss << address;
-                Logger::Log(loggerss.str());
                 ram.GetMemory(address, memValue);
                 ss << std::format(" {:02X}", memValue);
             }
-            Logger::Log("-----------------------------------------------------------------");
             DrawStringDecal(memoryTextPosition + olc::vf2d(4.0f, 2.5f + col * 2.0f), ss.str(), olc::WHITE, { 0.2f, 0.2f });
+        }
+    }
+
+    void DrawKeyboardView()
+    {
+        olc::vf2d infoTextStartingPos = { 65.0f, 37.0f };
+        DrawStringDecal(infoTextStartingPos, "Controls\n\n1 2 3 4\n\nQ W E R\n\nA S D F\n\nZ X C V\n\nMouse\nwheel to\nscroll\nthrough\nmemory\npages", olc::CYAN, { 0.2f, 0.2f });
+
+        olc::vf2d keysStartingPos = { 81.0f, 37.0f };
+        constexpr olc::vf2d KEY_SIZE = { 5.0f, 5.0f };
+        constexpr float SPACING = 2.0f;
+        constexpr int GRID_SIZE = 4; //Chip8 has 16 keys, so a square grid is fine
+        std::string KEYS[16] = { "1", "2", "3", "C",
+                                 "4", "5", "6", "D",
+                                 "7", "8", "9", "E",
+                                 "A", "0", "B", "F", };
+        typedef Chip8_Keyboard::Chip8Key KEY_ENUM;
+        Chip8_Keyboard::Chip8Key keys[16] = {
+            KEY_ENUM::KEY_1, KEY_ENUM::KEY_2, KEY_ENUM::KEY_3, KEY_ENUM::KEY_C,
+            KEY_ENUM::KEY_4, KEY_ENUM::KEY_5, KEY_ENUM::KEY_6, KEY_ENUM::KEY_D,
+            KEY_ENUM::KEY_7, KEY_ENUM::KEY_8, KEY_ENUM::KEY_9, KEY_ENUM::KEY_E,
+            KEY_ENUM::KEY_A, KEY_ENUM::KEY_0, KEY_ENUM::KEY_B, KEY_ENUM::KEY_F,
+        };
+        for (int x = 0; x < GRID_SIZE; x++)
+        {
+            olc::Pixel normalColor = olc::WHITE;
+            olc::Pixel pressedColor = olc::GREEN;
+            for (int y = 0; y < GRID_SIZE; y++)
+            {
+                size_t index = x + GRID_SIZE * y;
+                bool pressed = keyboard.GetKeyInfo(keys[index]).bHeld;
+
+                olc::vf2d keyOffset = olc::vf2d((KEY_SIZE.x + SPACING) * x,
+                    (KEY_SIZE.y + SPACING) * y);
+                olc::vf2d keyPosition = keysStartingPos + keyOffset;
+                DrawRectDecal(keyPosition, KEY_SIZE, pressed ? pressedColor : normalColor);
+                olc::vf2d keyTextOffset = { 1, 1 };
+                DrawStringDecal(keyPosition + keyTextOffset, KEYS[index], pressed ? pressedColor : normalColor, { 0.4f, 0.4f });
+            }
         }
     }
 };
@@ -299,7 +338,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     std::string path = std::string(lpCmdLine);
     Chip8Emulator emulator = Chip8Emulator(path);
     if (emulator.Construct(Chip8_Screen::WIDTH + MEMORY_VIEW_WIDTH,
-        Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT,
+        Chip8_Screen::HEIGHT + KEYBOARD_VIEW_HEIGHT,
         10, 10, false, true))
     {
         emulator.Start();
