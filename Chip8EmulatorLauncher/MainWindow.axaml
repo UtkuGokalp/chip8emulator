@@ -9,7 +9,8 @@
         Title="Chip-8 Emulator Launcher"
         Width="500"
         Height="320"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
     <StackPanel>
         <Grid ShowGridLines="False"
               Margin="5"
