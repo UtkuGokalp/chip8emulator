@@ -4,8 +4,6 @@
 #define OLC_PGEX_SOUND
 #include "olcPGEX_Sound.h"
 //After here the usual rules apply, ordering isn't important
-#include <Windows.h>
-#include <winnt.h>
 #include "Chip8HW.h"
 #include <map>
 #define _USE_MATH_DEFINES
