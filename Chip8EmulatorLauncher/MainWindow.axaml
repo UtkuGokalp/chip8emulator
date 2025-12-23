@@ -2,8 +2,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:local="using:Chip8EmulatorLauncher"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="330"
         x:Class="Chip8EmulatorLauncher.MainWindow"
-        Title="Chip8EmulatorLauncher">
-    Welcome to Avalonia!
+        x:DataType="local:MainWindow"
+        Title="Chip-8 Emulator Launcher"
+        Width="500"
+        Height="320"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <Grid ShowGridLines="False"
+              Margin="5"
+              RowDefinitions="Auto, Auto"
+              ColumnDefinitions="250, 250">
+
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <TextBlock Text="Demos" Margin="5"/>
+                <ComboBox Width="200" ItemsSource="{Binding Demos}" SelectedItem="{Binding SelectedItem}" Name="cbxDemos"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <TextBlock Text="Games" Margin="5"/>
+                <ComboBox Width="200" ItemsSource="{Binding Games}" SelectedItem="{Binding SelectedItem}" Name="cbxGames"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <TextBlock Text="Hires" Margin="5"/>
+                <ComboBox Width="200" ItemsSource="{Binding Hires}" SelectedItem="{Binding SelectedItem}" Name="cbxHires"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <TextBlock Text="Programs" Margin="5"/>
+                <ComboBox Width="200" ItemsSource="{Binding Programs}" SelectedItem="{Binding SelectedItem}" Name="cbxPrograms"/>
+            </StackPanel>
+        </Grid>
+        
+        <Grid ShowGridLines="False"
+              Margin="5"
+              RowDefinitions="50, 50, 50"
+              ColumnDefinitions="500">
+            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Click="btnLaunchEmulator_Click">Launch Emulator</Button>
+            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Click="btnKillInstance_Click">Kill Instance</Button>
+            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Click="btnOpenWorkingDir_Click">Open Working Directory</Button>
+        </Grid>
+    </StackPanel>
 </Window>
