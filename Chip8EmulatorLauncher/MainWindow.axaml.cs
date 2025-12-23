@@ -28,8 +28,8 @@ namespace Chip8EmulatorLauncher
         private const string EXECUTABLE_PATH = "..\\..\\..\\..\\x64\\Debug\\chip8emulator.exe";
         private const string ROMS_PATH = "..\\..\\..\\..\\chip8emulator\\roms";
 #elif LINUX
-        private const string EXECUTABLE_PATH = "..\\..\\..\\..\\x64\\Debug\\chip8emulator.exe";
-        private const string ROMS_PATH = "..\\..\\..\\..\\chip8emulator\\roms";
+        private const string EXECUTABLE_PATH = "../chip8emulator/bin/chip8emulator";
+        private const string ROMS_PATH = "../chip8emulator/roms";
 #endif
 
         //This boolean is used to distinguish between combobox items being changed via the user
