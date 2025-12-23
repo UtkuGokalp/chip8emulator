@@ -63,6 +63,7 @@ Chip8_Memory::RWState Chip8_Memory::SetMemory(uint16_t address, uint8_t value)
     else
     {
         memory[address] = value;
+        return RWState::SUCCESS;
     }
 }
 
