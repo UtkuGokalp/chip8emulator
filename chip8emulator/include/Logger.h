@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <format>
+#include <iostream>
 
 class Logger
 {

@@ -62,7 +62,7 @@ void Logger::SetLogFilePathInternal(const std::string& newFilePath)
     outputStream = std::ofstream(this->logFilePath, std::ios_base::app);
     if (!outputStream.is_open())
     {
-        throw std::exception("Couldn't open logging file.");
+        std::cerr << "Couldn't open logging file." << std::endl;
     }
 }
 
@@ -90,7 +90,7 @@ void Logger::LogInternal(const std::string& info, Logger::LogSeverity severity, 
     }
     else
     {
-        throw std::exception("Output stream is closed");
+        std::cerr << "Output stream is closed." << std::endl;
     }
     if (flushToFileImmediately)
     {
@@ -106,6 +106,6 @@ void Logger::FlushInternal()
     }
     else
     {
-        throw std::exception("Stream isn't open. Cannot flush.");
+        std::cerr << "Stream isn't open. Cannot flush." << std::endl;
     }
 }
