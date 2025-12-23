@@ -94,10 +94,11 @@ namespace Chip8EmulatorLauncher
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = EXECUTABLE_PATH,
-                Arguments = filePath,
-                UseShellExecute = false,
-                CreateNoWindow = true,
+                UseShellExecute = true,
             };
+            //Add the arguments via this method since it is cross platform and
+            //shouldn't cause problems with spaces in file paths etc.
+            startInfo.ArgumentList.Add(filePath);
             Process process = new Process
             {
                 StartInfo = startInfo,

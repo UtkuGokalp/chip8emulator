@@ -331,11 +331,23 @@ private:
     }
 };
 
-int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+void EndLogging(void)
+{
+    Logger::Log("=====================LOGGING END=====================");
+    Logger::Flush(); //Flush all the remaining logs before exiting the program.
+}
+
+int main(int argc, char** argv)
 {
     Logger::Log("=====================LOGGING START=====================");
     srand((unsigned int)time(NULL));
-    std::string path = std::string(lpCmdLine);
+    atexit(EndLogging);
+    if (argc != 2)
+    {
+        Logger::Log("Usage: <binary_name> <rom_path>", Logger::LogSeverity::LOGSEVERITY_ERROR);
+        return 1;
+    }
+    std::string path = std::string(argv[1]);
     Chip8Emulator emulator = Chip8Emulator(path);
     if (emulator.Construct(Chip8_Screen::WIDTH + MEMORY_VIEW_WIDTH,
         Chip8_Screen::HEIGHT + KEYBOARD_VIEW_HEIGHT,
@@ -343,7 +355,5 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     {
         emulator.Start();
     }
-    Logger::Log("=====================LOGGING END=====================");
-    Logger::Flush(); //Flush all the remaining logs before exiting the program.
     return 0;
 }
