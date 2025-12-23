@@ -18,22 +18,22 @@
 
             <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Demos" Margin="5"/>
-                <ComboBox Width="200" ItemsSource="{Binding Demos}" SelectedItem="{Binding SelectedItem}" Name="cbxDemos"/>
+                <ComboBox Width="200" Name="cbxDemos"/>
             </StackPanel>
             
             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Games" Margin="5"/>
-                <ComboBox Width="200" ItemsSource="{Binding Games}" SelectedItem="{Binding SelectedItem}" Name="cbxGames"/>
+                <ComboBox Width="200" Name="cbxGames"/>
             </StackPanel>
             
             <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Hires" Margin="5"/>
-                <ComboBox Width="200" ItemsSource="{Binding Hires}" SelectedItem="{Binding SelectedItem}" Name="cbxHires"/>
+                <ComboBox Width="200" Name="cbxHires"/>
             </StackPanel>
             
             <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Programs" Margin="5"/>
-                <ComboBox Width="200" ItemsSource="{Binding Programs}" SelectedItem="{Binding SelectedItem}" Name="cbxPrograms"/>
+                <ComboBox Width="200" Name="cbxPrograms"/>
             </StackPanel>
         </Grid>
         
