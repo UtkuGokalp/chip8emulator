@@ -361,5 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Emulator logs
 /chip8emulator/CHIP8_EMU_LOG.txt
 Chip8EmulatorLauncher/CHIP8_EMU_LOG.txt
+CHIP8_EMU_LOG.txt
