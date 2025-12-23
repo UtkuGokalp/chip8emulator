@@ -8,7 +8,7 @@
         x:DataType="local:MainWindow"
         Title="Chip-8 Emulator Launcher"
         Width="500"
-        Height="320"
+        Height="350"
         WindowStartupLocation="CenterScreen"
         CanResize="False">
     <StackPanel>
@@ -21,30 +21,32 @@
                 <TextBlock Text="Demos" Margin="5"/>
                 <ComboBox Width="200" Name="cbxDemos"/>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Games" Margin="5"/>
                 <ComboBox Width="200" Name="cbxGames"/>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Hires" Margin="5"/>
                 <ComboBox Width="200" Name="cbxHires"/>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
                 <TextBlock Text="Programs" Margin="5"/>
                 <ComboBox Width="200" Name="cbxPrograms"/>
             </StackPanel>
         </Grid>
-        
-        <Grid ShowGridLines="False"
+
+        <Grid ShowGridLines="True"
               Margin="5"
-              RowDefinitions="50, 50, 50"
+              RowDefinitions="50, 50, 50, 50"
               ColumnDefinitions="500">
-            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Click="btnLaunchEmulator_Click">Launch Emulator</Button>
-            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Click="btnKillInstance_Click">Kill Instance</Button>
-            <Button Width="200" Height="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Click="btnOpenWorkingDir_Click">Open Working Directory</Button>
+            <Button Width="200" Height="40" Grid.Row="0" Click="btnLaunchEmulator_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">Launch Emulator</Button>
+            <Button Width="200" Height="40" Grid.Row="1" Click="btnKillInstance_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">Kill Instance</Button>
+            <Button Width="200" Height="40" Grid.Row="2" Click="btnOpenWorkingDir_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">Open Working Directory</Button>
+            <TextBlock Width="500" Height="25" Grid.Row="3" Text="No errors" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Name="txtErrors"/>
         </Grid>
+
     </StackPanel>
 </Window>

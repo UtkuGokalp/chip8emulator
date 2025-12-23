@@ -1,8 +1,12 @@
-using System.IO;
 using Avalonia.Controls;
-using System.ComponentModel;
 using Avalonia.Interactivity;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 /*
 IMPORTANT NOTICE:
@@ -27,7 +31,6 @@ namespace Chip8EmulatorLauncher
         private const string EXECUTABLE_PATH = "..\\..\\..\\..\\x64\\Debug\\chip8emulator.exe";
         private const string ROMS_PATH = "..\\..\\..\\..\\chip8emulator\\roms";
 #endif
-        public string? SelectedROMPath { get; set; }
 
         //This boolean is used to distinguish between combobox items being changed via the user
         //vs the program. If the program changes the SelectedIndex (which it needs to do in order
@@ -39,18 +42,21 @@ namespace Chip8EmulatorLauncher
         //Once the required execution is complete, this boolean will be set to false again so that once the
         //user chooses a new ROM, it will be registered correctly.
         private bool codeWillChangeSelectedItem = false;
+        private Process? currentProcess = null;
         private Dictionary<string, string>[] romName2romPath =
-        [
+        {
             new Dictionary<string, string>(),
             new Dictionary<string, string>(),
             new Dictionary<string, string>(),
             new Dictionary<string, string>(),
-        ];
+        };
+        public string? SelectedROMPath { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
+            ResetErrorText();
 
             //Load ROM paths and add ROM names to comboboxes
             ComboBox[] cbxs = GetAllComboBoxes();
@@ -81,17 +87,76 @@ namespace Chip8EmulatorLauncher
 
         private void btnLaunchEmulator_Click(object? sender, RoutedEventArgs e)
         {
+            if (SelectedROMPath == null || SelectedROMPath == string.Empty)
+            {
+                DisplayError("Invalid ROM path, did you choose a ROM?");
+                return;
+            }
 
+            ProcessStartInfo psi = new ProcessStartInfo()
+            {
+                FileName = EXECUTABLE_PATH,
+                UseShellExecute = true,
+            };
+            psi.ArgumentList.Add(SelectedROMPath);
+            Process p = new Process()
+            {
+                StartInfo = psi,
+                EnableRaisingEvents = true,
+            };
+            bool started = p.Start();
+            if (started)
+            {
+                currentProcess = p;
+                ResetErrorText();
+            }
+            else
+            {
+                DisplayError("Couldn't start process");
+            }
         }
 
         private void btnKillInstance_Click(object? sender, RoutedEventArgs e)
         {
-
+            if (currentProcess != null)
+            {
+                //If the process didn't already exit through normal means
+                if (!currentProcess.HasExited)
+                {
+                    try
+                    {
+                        currentProcess.Kill(true);
+                        ResetErrorText();
+                    }
+                    catch (Exception ex)
+                    {
+                        DisplayError(ex.Message);
+                    }
+                }
+                currentProcess.Close();
+                currentProcess.Dispose();
+                currentProcess = null;
+            }
+            else
+            {
+                DisplayError("No working emulator instance found");
+            }
         }
 
         private void btnOpenWorkingDir_Click(object? sender, RoutedEventArgs e)
         {
-            
+            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (path == null)
+            {
+                DisplayError("Failed to find executing assembly path");
+                return;
+            }
+#if WINDOWS
+            Process.Start("explorer.exe", path);
+#elif LINUX
+            //TODO: Implement Linux explorer opening
+#endif
+            ResetErrorText();
         }
 
         private void cbxSelectionChanged(object? sender, RoutedEventArgs e)
@@ -103,6 +168,7 @@ namespace Chip8EmulatorLauncher
             codeWillChangeSelectedItem = true;
             ComboBox source = (ComboBox)sender;
             ComboBox[] cbxs = GetAllComboBoxes();
+            bool romSelected = false;
             for (int i = 0; i < cbxs.Length; i++)
             {
                 ComboBox cbx = cbxs[i];
@@ -113,6 +179,7 @@ namespace Chip8EmulatorLauncher
                     if (success)
                     {
                         SelectedROMPath = romPath;
+                        romSelected = true;
                     }
                 }
                 else
@@ -121,6 +188,11 @@ namespace Chip8EmulatorLauncher
                     cbx.SelectedIndex = 0;
                 }
             }
+
+            if (!romSelected)
+            {
+                SelectedROMPath = null;
+            }
             codeWillChangeSelectedItem = false;
         }
 
@@ -128,6 +200,16 @@ namespace Chip8EmulatorLauncher
         {
             ComboBox[] cbxs = { cbxDemos, cbxGames, cbxHires, cbxPrograms };
             return cbxs;
+        }
+
+        private void DisplayError(string? error)
+        {
+            txtErrors.Text = error;
+        }
+
+        private void ResetErrorText()
+        {
+            txtErrors.Text = "No errors";
         }
     }
 }
