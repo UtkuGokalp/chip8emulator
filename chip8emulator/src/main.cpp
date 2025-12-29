@@ -1,4 +1,6 @@
 //The ordering of these defines and includes are important
+#include <cmath>
+#include <format>
 #define OLC_PGE_APPLICATION
 #define OLC_PGEX_DECALS
 #include "olcPixelGameEngine.h"
@@ -38,7 +40,9 @@ private:
     const std::string& romPath;
     bool emulationRunning;
     unsigned int memoryPageToDisplay;
-    static constexpr int CPU_TICK_PER_UPDATE = 1;
+    unsigned int ticksPerUpdate = 16;
+    static constexpr unsigned int MIN_TICKS_PER_UPDATE = 1;
+    static constexpr unsigned int MAX_TICKS_PER_UPDATE = 32;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -104,10 +108,24 @@ private:
                 memoryPageToDisplay--;
             }
         }
+        if (GetKey(olc::Key::NP_ADD).bPressed)
+        {
+            if (ticksPerUpdate < MAX_TICKS_PER_UPDATE)
+            {
+                ticksPerUpdate++;
+            }
+        }
+        if (GetKey(olc::Key::NP_SUB).bPressed)
+        {
+            if (ticksPerUpdate > MIN_TICKS_PER_UPDATE)
+            {
+                ticksPerUpdate--;
+            }
+        }
 
         if (emulationRunning)
         {
-            for (int i = 0; i < CPU_TICK_PER_UPDATE; i++)
+            for (int i = 0; i < ticksPerUpdate; i++)
             {
                 //Tick the CPU
                 if (!cpu.ExecuteNextInstruction())
@@ -128,6 +146,7 @@ private:
         DrawCPURegisterView();
         DrawMemoryView(memoryPageToDisplay);
         DrawKeyboardView();
+        DrawEmulationSpeedView();
         return true;
     }
 
@@ -332,6 +351,13 @@ private:
                 DrawStringDecal(keyPosition + keyTextOffset, KEYS[index], pressed ? pressedColor : normalColor, { 0.4f, 0.4f });
             }
         }
+    }
+
+    void DrawEmulationSpeedView()
+    {
+        olc::vf2d pos = { 1.0f, Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT + 2.0f };
+        std::string text = std::format("     Emulation Speed\n(Numpad + or - to adjust)\n         - {:02} +", ticksPerUpdate);
+        DrawStringDecal({ pos.x + 1.0f, pos.y }, text, olc::CYAN, { 0.2f, 0.2f });
     }
 };
 
