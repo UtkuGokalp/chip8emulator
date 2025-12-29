@@ -19,6 +19,7 @@ private:
     Pixel screen[WIDTH * HEIGHT];
     olc::PixelGameEngine& pgeInstance;
     olc::Sprite screenSprite;
+    olc::Decal screenDecal;
 
 public:
     Chip8_Screen(olc::PixelGameEngine& instance);

@@ -63,7 +63,6 @@ private:
 
     bool OnUserCreate() override
     {
-        
         Clear(BACKGROUND_COLOR);
         Logger::Log(std::format("Loading ROM: {}", romPath));
         if (ram.LoadROM(romPath) == false)
