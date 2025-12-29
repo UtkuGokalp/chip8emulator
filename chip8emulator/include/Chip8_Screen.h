@@ -9,9 +9,14 @@ public:
     //Apparently there are other resolutions but just support the og resolution right now.
     static constexpr int WIDTH = 64;
     static constexpr int HEIGHT = 32;
+    struct Pixel
+    {
+        uint8_t color;
+        bool isDirty;
+    };
 
 private:
-    uint8_t screen[WIDTH * HEIGHT];
+    Pixel screen[WIDTH * HEIGHT];
     olc::PixelGameEngine& pgeInstance;
     olc::Sprite screenSprite;
 
