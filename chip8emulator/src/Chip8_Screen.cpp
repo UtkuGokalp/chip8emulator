@@ -12,7 +12,7 @@ void Chip8_Screen::DisplayScreen()
     {
         for (int x = 0; x < WIDTH; x++)
         {
-            screenSprite.SetPixel(x, y, screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK);
+            screenSprite.SetPixel(x, y, GetPixel(x, y) == 1 ? olc::WHITE : olc::BLACK);
         }
     }
     pgeInstance.DrawSprite({0, 0}, &screenSprite);
