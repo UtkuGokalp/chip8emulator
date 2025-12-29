@@ -53,7 +53,7 @@ public:
         romPath(romPath),
         memoryPageToDisplay(0)
     {
-        sAppName = "Chip-8 Emulator (PRESS SPACE TO START THE EMULATION)";
+        sAppName = "Chip-8 Emulator";
         emulationRunning = false;
         olc::SOUND::InitialiseAudio();
     }
@@ -66,18 +66,21 @@ private:
         return AMPLITUDE * sinf(2.0f * (float)M_PI * FREQUENCY * timeSinceAppStart);
     }
 
-    bool OnUserCreate() override
+    bool LoadROM(const std::string& path)
     {
-        Clear(BACKGROUND_COLOR);
-        Logger::Log(std::format("Loading ROM: {}", romPath));
-        if (ram.LoadROM(romPath) == false)
+        Logger::Log(std::format("Loading ROM: {}", path));
+        if (ram.LoadROM(path) == false)
         {
             Logger::Log("Failed to load ROM. Either the file doesn't exist or is too big.", Logger::LogSeverity::LOGSEVERITY_ERROR);
             return false;
         }
         Logger::Log("Successfully loaded ROM.");
-
         return true;
+    }
+
+    bool OnUserCreate() override
+    {
+        return LoadROM(romPath);
     }
 
     bool OnUserUpdate(float deltaTime) override
@@ -87,10 +90,10 @@ private:
             return false;
         }
 
+        Clear(BACKGROUND_COLOR);
         if (!emulationRunning && GetKey(olc::Key::SPACE).bPressed)
         {
             emulationRunning = true;
-            sAppName = "Chip-8 Emulator";
             return true;
         }
 
@@ -122,6 +125,14 @@ private:
                 ticksPerUpdate--;
             }
         }
+        if (GetKey(olc::Key::SPACE).bPressed)
+        {
+            emulationRunning = false;
+            cpu.ResetRegisters();
+            ram.ResetMemory(); //Probably not necessary since reloading the ROM effectively does the same thing, but just in case
+            screen.ClearScreen();
+            LoadROM(romPath);
+        }
 
         if (emulationRunning)
         {
@@ -147,6 +158,7 @@ private:
         DrawMemoryView(memoryPageToDisplay);
         DrawKeyboardView();
         DrawEmulationSpeedView();
+        DrawEmulationStartResetView();
         return true;
     }
 
@@ -236,10 +248,16 @@ private:
 
         DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 19.0f), "PC", olc::GREEN, { 0.2f, 0.2f });
         DrawStringDecal(topLeftPosition + olc::vf2d(4.5f, 19.0f), std::format("{:02X}", cpu.GetProgramCounterValue()), olc::WHITE, { 0.2f, 0.2f });
+        
         DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 19.0f), "SP", olc::GREEN, { 0.2f, 0.2f });
         DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 19.0f), std::format("{:02X}", cpu.GetStackPointerValue()), olc::WHITE, { 0.2f, 0.2f });
+        
+        DrawStringDecal(topLeftPosition + olc::vf2d(20.0f, 19.0f), "I", olc::GREEN, { 0.2f, 0.2f });
+        DrawStringDecal(topLeftPosition + olc::vf2d(22.3f, 19.0f), std::format("{:03X}", cpu.GetIRegisterValue()), olc::WHITE, { 0.2f, 0.2f });
+
         DrawStringDecal(topLeftPosition + olc::vf2d(0.5f, 21.0f), "DT", olc::GREEN, { 0.2f, 0.2f });
         DrawStringDecal(topLeftPosition + olc::vf2d(4.5f, 21.0f), std::format("{:02X}", cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::DelayTimer)), olc::WHITE, { 0.2f, 0.2f });
+        
         DrawStringDecal(topLeftPosition + olc::vf2d(10.5f, 21.0f), "ST", olc::GREEN, { 0.2f, 0.2f });
         DrawStringDecal(topLeftPosition + olc::vf2d(14.5f, 21.0f), std::format("{:02X}", cpu.GetTimerValue(Chip8_CPU::TimerRegisterType::SoundTimer)), olc::WHITE, { 0.2f, 0.2f });
 
@@ -355,8 +373,15 @@ private:
 
     void DrawEmulationSpeedView()
     {
-        olc::vf2d pos = { 1.0f, Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT + 2.0f };
+        olc::vf2d pos = { 1.0f, Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT };
         std::string text = std::format("     Emulation Speed\n(Numpad + or - to adjust)\n         - {:02} +", ticksPerUpdate);
+        DrawStringDecal({ pos.x + 1.0f, pos.y }, text, olc::CYAN, { 0.2f, 0.2f });
+    }
+
+    void DrawEmulationStartResetView()
+    {
+        olc::vf2d pos = { 1.0f, Chip8_Screen::HEIGHT + CPU_REGISTERS_VIEW_HEIGHT + 6.0f };
+        std::string text = std::format("Press space to {} the emulation", emulationRunning ? "reset" : "start");
         DrawStringDecal({ pos.x + 1.0f, pos.y }, text, olc::CYAN, { 0.2f, 0.2f });
     }
 };

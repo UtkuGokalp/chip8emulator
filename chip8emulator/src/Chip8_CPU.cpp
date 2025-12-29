@@ -5,13 +5,7 @@ Chip8_CPU::Chip8_CPU(Chip8_Keyboard& keyboard, Chip8_Memory& ram, Chip8_Screen& 
     ram(ram),
     screen(screen)
 {
-    delayTimer = 0x00;
-    soundTimer = 0x00;
-    pc = 0x200; //Programs will start executing from 0x200
-    sp = 0; //Even though this is a pointer, internally it is just an index.
-    stack.fill(0);
-    registers.fill(0);
-    Iregister = 0x0000;
+    ResetRegisters(); //Since resetting gives the initial values to the registers, it can also be used for initializing them.
 }
 
 uint8_t Chip8_CPU::GetGPRegisterValue(Chip8_CPU::RegisterID id)
@@ -103,6 +97,17 @@ bool Chip8_CPU::DecreaseStackPointer()
         return false;
     }
     return true;
+}
+
+void Chip8_CPU::ResetRegisters()
+{
+    delayTimer = 0x00;
+    soundTimer = 0x00;
+    pc = 0x200; //Programs will start executing from 0x200
+    sp = 0; //Even though this is a pointer, internally it is just an index.
+    stack.fill(0);
+    registers.fill(0);
+    Iregister = 0x0000;
 }
 
 bool Chip8_CPU::ExecuteNextInstruction()

@@ -42,6 +42,7 @@ public:
     };
     static const int MEMORY_SIZE_IN_BYTES = 4096;
     Chip8_Memory();
+    void ResetMemory();
     RWState GetMemory(uint16_t address, uint8_t& value);
     RWState SetMemory(uint16_t address, uint8_t value);
     bool LoadROM(const std::string& filepath);

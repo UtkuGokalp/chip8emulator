@@ -53,6 +53,7 @@ public:
     uint8_t GetStackPointerValue();
     uint8_t GetValueInStack(uint8_t address);
     bool ExecuteNextInstruction();
+    void ResetRegisters();
 private:
     //Registers accessible to programs
     std::array<uint8_t, (int)RegisterID::COUNT> registers; //V0-VF, VF shouldn't be used by any program

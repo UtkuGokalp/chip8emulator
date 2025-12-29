@@ -2,6 +2,13 @@
 
 Chip8_Memory::Chip8_Memory()
 {
+    //Resetting memory basically initializes the memory again,
+    //so this function can be used to initialize for the first time as well.
+    ResetMemory();
+}
+
+void Chip8_Memory::ResetMemory()
+{
     //Set everything in memory to 0xFF in the beginning so that 0xFF most likely means uninitialized memory later down the road.
     memset(memory, 0xFF, MEMORY_SIZE_IN_BYTES);
 
