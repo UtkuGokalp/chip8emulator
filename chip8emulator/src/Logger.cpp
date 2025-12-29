@@ -1,4 +1,6 @@
 #include "Logger.h"
+#include <sstream>
+#include <iostream>
 
 //Utility
 void ClearFileIfExists(const std::string& filePath)

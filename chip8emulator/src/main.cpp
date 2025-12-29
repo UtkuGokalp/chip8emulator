@@ -4,7 +4,10 @@
 #define OLC_PGEX_SOUND
 #include "olcPGEX_Sound.h"
 //After here the usual rules apply, ordering isn't important
-#include "Chip8HW.h"
+#include "Chip8_CPU.h"
+#include "Chip8_Keyboard.h"
+#include "Chip8_Memory.h"
+#include "Chip8_Screen.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstdlib>
