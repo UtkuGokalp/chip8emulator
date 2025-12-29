@@ -1,5 +1,6 @@
 //The ordering of these defines and includes are important
 #define OLC_PGE_APPLICATION
+#define OLC_PGEX_DECALS
 #include "olcPixelGameEngine.h"
 #define OLC_PGEX_SOUND
 #include "olcPGEX_Sound.h"
@@ -62,6 +63,7 @@ private:
 
     bool OnUserCreate() override
     {
+        
         Clear(BACKGROUND_COLOR);
         Logger::Log(std::format("Loading ROM: {}", romPath));
         if (ram.LoadROM(romPath) == false)
@@ -137,6 +139,7 @@ private:
         //decrementTimes[0] is the delay timer.
         //decrementTimes[1] is the sound timer.
         //Which index means which register is defined by their order in the Chip8_Registers::TimerRegisterType enum.
+        //The timers should decrease by 1 every 1/60 seconds (aka 0.01666666 seconds)
         static float decrementTimes[2] = { Chip8_CPU::TIMER_DECREMENT_RATE, Chip8_CPU::TIMER_DECREMENT_RATE };
         static bool audioSynthFunctionSet = false;
         uint8_t registerValue = cpu.GetTimerValue(type);

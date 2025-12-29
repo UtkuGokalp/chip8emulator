@@ -13,6 +13,7 @@ public:
 private:
     uint8_t screen[WIDTH * HEIGHT];
     olc::PixelGameEngine& pgeInstance;
+    olc::Sprite screenSprite;
 
 public:
     Chip8_Screen(olc::PixelGameEngine& instance);

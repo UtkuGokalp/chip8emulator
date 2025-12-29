@@ -3,6 +3,7 @@
 Chip8_Screen::Chip8_Screen(olc::PixelGameEngine& instance) : pgeInstance(instance)
 {
     memset(screen, 0x00, WIDTH * HEIGHT);
+    screenSprite = olc::Sprite(WIDTH, HEIGHT);
 }
 
 void Chip8_Screen::DisplayScreen()
@@ -11,9 +12,10 @@ void Chip8_Screen::DisplayScreen()
     {
         for (int x = 0; x < WIDTH; x++)
         {
-            pgeInstance.Draw(x, y, screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK);
+            screenSprite.SetPixel(x, y, screen[x + y * WIDTH] == 1 ? olc::WHITE : olc::BLACK);
         }
     }
+    pgeInstance.DrawSprite({0, 0}, &screenSprite);
 }
 
 void Chip8_Screen::ClearScreen()

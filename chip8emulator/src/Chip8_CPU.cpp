@@ -260,10 +260,11 @@ bool Chip8_CPU::ExecuteNextInstruction()
         break;
     }
 
+    
     case 0xD000: // DRW Vx, Vy, nibble
     {
-        uint8_t registerIndex1 = (opcode & 0x0F00) >> 8;
-        uint8_t registerIndex2 = (opcode & 0x00F0) >> 4;
+        uint8_t registerX = (opcode & 0x0F00) >> 8;
+        uint8_t registerY = (opcode & 0x00F0) >> 4;
         uint8_t spriteHeight = opcode & 0x000F;
 
         registers[(int)RegisterID::VF] = 0;
@@ -278,8 +279,8 @@ bool Chip8_CPU::ExecuteNextInstruction()
                 uint8_t spritePixel = (spriteByte >> (7 - col)) & 0x1;
                 if (spritePixel == 0) continue;
 
-                int x = (registers[registerIndex1] + col) % 64;
-                int y = (registers[registerIndex2] + row) % 32;
+                int x = (registers[registerX] + col) % 64;
+                int y = (registers[registerY] + row) % 32;
 
                 if (screen.GetPixel(x, y) == 1)
                     registers[(int)RegisterID::VF] = 1;
@@ -290,7 +291,7 @@ bool Chip8_CPU::ExecuteNextInstruction()
         }
         break;
     }
-
+    
     case 0xE000:
     {
         uint8_t registerIndex = (opcode & 0x0F00) >> 8;
