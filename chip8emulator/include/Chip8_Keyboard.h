@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <cstdint>
 #include <olcPixelGameEngine.h>
 
 class Chip8_Keyboard

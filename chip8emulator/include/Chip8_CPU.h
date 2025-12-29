@@ -2,10 +2,8 @@
 #pragma once
 
 #include <Logger.h>
-#include <stack>
 #include <cstdlib>
 #include <cstdint>
-#include <exception>
 #include <Chip8_Memory.h>
 #include <Chip8_Screen.h>
 #include <Chip8_Keyboard.h>

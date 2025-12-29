@@ -5,12 +5,9 @@
 #include "olcPGEX_Sound.h"
 //After here the usual rules apply, ordering isn't important
 #include "Chip8HW.h"
-#include <map>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <exception>
 #include <cstdlib>
-#include <array>
 
 #define CPU_REGISTERS_VIEW_WIDTH                  Chip8_Screen::WIDTH
 #define CPU_REGISTERS_VIEW_HEIGHT                 24
