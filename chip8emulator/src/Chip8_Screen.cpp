@@ -1,7 +1,7 @@
 #include "Chip8_Screen.h"
 #include <cstddef>
 
-Chip8_Screen::Chip8_Screen(olc::PixelGameEngine& instance) : pgeInstance(instance), screenSprite(olc::Sprite(WIDTH, HEIGHT)), screenDecal(&screenSprite)
+Chip8_Screen::Chip8_Screen(olc::PixelGameEngine& instance) : pgeInstance(instance), screenSprite(olc::Sprite(WIDTH, HEIGHT))
 {
     ClearScreen(); //This sets each pixel in the screen, which works for initialization as well.
 }
@@ -20,9 +20,7 @@ void Chip8_Screen::DisplayScreen()
             }
         }
     }
-    //pgeInstance.DrawSprite({0, 0}, &screenSprite);
-    screenDecal.Update();
-    pgeInstance.DrawDecal({ 0, 0 }, &screenDecal);
+    pgeInstance.DrawSprite({0, 0}, &screenSprite);
 }
 
 void Chip8_Screen::ClearScreen()

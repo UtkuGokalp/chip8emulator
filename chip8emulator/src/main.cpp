@@ -38,6 +38,7 @@ private:
     const std::string& romPath;
     bool emulationRunning;
     unsigned int memoryPageToDisplay;
+    static constexpr int CPU_TICK_PER_UPDATE = 14;
 
 public:
     Chip8Emulator(const std::string& romPath) :
@@ -106,11 +107,14 @@ private:
 
         if (emulationRunning)
         {
-            //Tick the CPU
-            if (!cpu.ExecuteNextInstruction())
+            for (int i = 0; i < CPU_TICK_PER_UPDATE; i++)
             {
-                Logger::Log("Error during instruction execution! Closing the application.", Logger::LogSeverity::LOGSEVERITY_ERROR);
-                return false;
+                //Tick the CPU
+                if (!cpu.ExecuteNextInstruction())
+                {
+                    Logger::Log("Error during instruction execution! Closing the application.", Logger::LogSeverity::LOGSEVERITY_ERROR);
+                    return false;
+                }
             }
 
             //Update the screen
