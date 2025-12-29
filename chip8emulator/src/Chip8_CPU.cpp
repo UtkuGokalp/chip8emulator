@@ -304,7 +304,7 @@ bool Chip8_CPU::ExecuteNextInstruction()
                 pc += 2;
             break;
         case 0x00A1:
-            if (!info.bPressed)
+            if (!info.bHeld)
                 pc += 2;
             break;
         default:

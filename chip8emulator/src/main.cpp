@@ -38,7 +38,7 @@ private:
     const std::string& romPath;
     bool emulationRunning;
     unsigned int memoryPageToDisplay;
-    static constexpr int CPU_TICK_PER_UPDATE = 14;
+    static constexpr int CPU_TICK_PER_UPDATE = 1;
 
 public:
     Chip8Emulator(const std::string& romPath) :
