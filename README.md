@@ -13,3 +13,6 @@ The following is a screenshot of the launcher. It is configured so that you can 
 Finally, the following is a demo of the emulator running the Pong (1 player) ROM, which can be found under the Games category.
 
 ![EmulatorDemo](Pong.gif)
+
+# Building on Windows
+On Windows, project files of Visual Studio should contain all the necessary information to build and run the emulator. Just click the Start button.
