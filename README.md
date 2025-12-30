@@ -10,6 +10,6 @@ The following is a screenshot of the launcher. It is configured so that you can 
 
 ![Launcher](Launcher.jpg)
 
-Finally, the following is a demo of the emulator running the Bitmap Viewer ROM, which can be found under the Programs category.
+Finally, the following is a demo of the emulator running the Pong (1 player) ROM, which can be found under the Games category.
 
-![EmulatorDemo](BitmapViewer.gif)
+![EmulatorDemo](Pong.gif)
