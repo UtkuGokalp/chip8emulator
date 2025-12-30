@@ -100,7 +100,12 @@ private:
 
     bool LoadAudioWaveform()
     {
-        const std::string& waveformPath = "chip8emulator/assets/chip8_beep.wav";
+        std::string waveformPath = "INVALID PATH";
+#ifdef _WIN32 //Compiling on Windows
+        waveformPath = "..\\..\\..\\..\\chip8emulator\\assets\\chip8_beep.wav";
+#else //Compiling on another platform (assume Linux)
+        waveformPath = "chip8emulator/assets/chip8_beep.wav";
+#endif
         if (waveform.LoadAudioWaveform(waveformPath))
         {
             Logger::Log(std::format("Successfully loaded the waveform from {}.", waveformPath));
