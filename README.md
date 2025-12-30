@@ -8,7 +8,7 @@ I developed the emulator itself in C++. Once I found Chip-8 ROMs [here](https://
 
 The following is a screenshot of the launcher. It is configured so that you can only choose a single ROM, trying to choose another one deselects the currently selected ROM. The ROMs in the "Hires" category doesn't work at all, since they require extra features that exist on extended versions of Chip-8 and the emulator doesn't currently support them.
 
-[Launcher](Launcher.jpg)
+![Launcher](Launcher.jpg)
 
 Finally, the following is a demo of the emulator running the Bitmap Viewer ROM, which can be found under the Programs category.
 
