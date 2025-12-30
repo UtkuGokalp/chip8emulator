@@ -40,6 +40,7 @@ public:
         COUNT
     };
 
+    //The timers should decrease by 1 every 1/60 seconds (aka 0.01666666 seconds)
     static constexpr float TIMER_DECREMENT_RATE = (1.0f / 60.0f);
 
     Chip8_CPU(Chip8_Keyboard& keyboard, Chip8_Memory& ram, Chip8_Screen& screen);

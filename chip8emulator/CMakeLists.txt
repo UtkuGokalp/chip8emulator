@@ -24,7 +24,8 @@ target_link_libraries(chip8emulator
         GL
         pthread
         png
-        asound
+        pulse
+        pulse-simple
 )
 
 # Output binary to bin/

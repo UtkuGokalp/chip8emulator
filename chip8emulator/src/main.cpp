@@ -1,12 +1,14 @@
 //The ordering of these defines and includes are important
+#define OLC_PGE_APPLICATION
+#include "olcPixelGameEngine.h"
+
+//After here the usual rules apply, ordering isn't important
+#define OLC_SOUNDWAVE
+#include "olcSoundWaveEngine.h"
 #include <cmath>
 #include <format>
-#define OLC_PGE_APPLICATION
-#define OLC_PGEX_DECALS
-#include "olcPixelGameEngine.h"
-#define OLC_PGEX_SOUND
-#include "olcPGEX_Sound.h"
-//After here the usual rules apply, ordering isn't important
+#include <string>
+#include "Logger.h"
 #include "Chip8_CPU.h"
 #include "Chip8_Keyboard.h"
 #include "Chip8_Memory.h"
@@ -28,16 +30,26 @@
 #define KEYBOARD_VIEW_WIDTH           30
 #define KEYBOARD_VIEW_HEIGHT          35
 
-const olc::Pixel BACKGROUND_COLOR = olc::DARK_GREY;
 
 class Chip8Emulator : public olc::PixelGameEngine
 {
-private:
+    private:
+    //Chip-8 Hardware
     Chip8_Keyboard keyboard;
     Chip8_Screen screen;
     Chip8_Memory ram;
     Chip8_CPU cpu;
+    
+    //Sound related
+    olc::sound::WaveEngine soundEngine;
+    olc::sound::Wave waveform;
+    olc::sound::PlayingWave playingWave;
+    bool playingSound = false;
+    
+    //ROM
     const std::string& romPath;
+    
+    //Emulator state
     bool emulationRunning;
     unsigned int memoryPageToDisplay;
     unsigned int ticksPerUpdate = 16;
@@ -55,16 +67,9 @@ public:
     {
         sAppName = "Chip-8 Emulator";
         emulationRunning = false;
-        olc::SOUND::InitialiseAudio();
     }
 
 private:
-    static float GenerateBuzzerSound(int channelCount, float timeSinceAppStart, float timeStep)
-    {
-        constexpr float FREQUENCY = 440.0f;
-        constexpr float AMPLITUDE = 0.35f;
-        return AMPLITUDE * sinf(2.0f * (float)M_PI * FREQUENCY * timeSinceAppStart);
-    }
 
     bool LoadROM(const std::string& path)
     {
@@ -78,9 +83,42 @@ private:
         return true;
     }
 
+    bool InitializeAudio()
+    {
+        //For some reason InitializeAudio returns false no matter what? So I am guessing that false means success in this context?
+        if (!soundEngine.InitialiseAudio())
+        {
+            Logger::Log("Successfully initialized the sound engine.");
+            return true;
+        }
+        else
+        {
+            Logger::Log("There was an issue initializing the sound engine.", Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
+        }
+    }
+
+    bool LoadAudioWaveform()
+    {
+        const std::string& waveformPath = "chip8emulator/assets/chip8_beep.wav";
+        if (waveform.LoadAudioWaveform(waveformPath))
+        {
+            Logger::Log(std::format("Successfully loaded the waveform from {}.", waveformPath));
+            return true;
+        }
+        else
+        {
+            Logger::Log(std::format("There was an error loading the waveform from {}.", waveformPath), Logger::LogSeverity::LOGSEVERITY_ERROR);
+            return false;
+        }
+    }
+
     bool OnUserCreate() override
     {
-        return LoadROM(romPath);
+        bool initializedAudio = InitializeAudio();
+        bool loadedWaveform = LoadAudioWaveform();
+        bool loadedROM = LoadROM(romPath);
+        return initializedAudio && loadedWaveform && loadedROM;
     }
 
     bool OnUserUpdate(float deltaTime) override
@@ -90,7 +128,7 @@ private:
             return false;
         }
 
-        Clear(BACKGROUND_COLOR);
+        Clear(olc::DARK_GREY);
         if (!emulationRunning && GetKey(olc::Key::SPACE).bPressed)
         {
             emulationRunning = true;
@@ -164,7 +202,7 @@ private:
 
     bool OnUserDestroy() override
     {
-        olc::SOUND::DestroyAudio();
+        soundEngine.DestroyAudio();
         return true;
     }
 
@@ -173,9 +211,7 @@ private:
         //decrementTimes[0] is the delay timer.
         //decrementTimes[1] is the sound timer.
         //Which index means which register is defined by their order in the Chip8_Registers::TimerRegisterType enum.
-        //The timers should decrease by 1 every 1/60 seconds (aka 0.01666666 seconds)
         static float decrementTimes[2] = { Chip8_CPU::TIMER_DECREMENT_RATE, Chip8_CPU::TIMER_DECREMENT_RATE };
-        static bool audioSynthFunctionSet = false;
         uint8_t registerValue = cpu.GetTimerValue(type);
         if (registerValue > 0)
         {
@@ -189,20 +225,22 @@ private:
                 decrementTimes[(int)type] -= deltaTime;
             }
 
-            //Play the buzzer sound for the sound timer
-            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && !audioSynthFunctionSet)
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && !playingSound)
             {
-                olc::SOUND::SetUserSynthFunction(GenerateBuzzerSound);
-                audioSynthFunctionSet = true;
+                //Play the buzzer sound
+                playingWave = soundEngine.PlayWaveform(&waveform);
+                playingSound = true;
             }
         }
         else
         {
             decrementTimes[(int)type] = Chip8_CPU::TIMER_DECREMENT_RATE;
-            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && audioSynthFunctionSet)
+
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && playingSound)
             {
-                olc::SOUND::SetUserSynthFunction(nullptr);
-                audioSynthFunctionSet = false;
+                //Stop playing the buzzer sound
+                soundEngine.StopWaveform(playingWave);
+                playingSound = false;
             }
         }
     }
