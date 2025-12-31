@@ -43,8 +43,6 @@ class Chip8Emulator : public olc::PixelGameEngine
     //Sound related
     olc::sound::WaveEngine soundEngine;
     olc::sound::Wave waveform;
-    olc::sound::PlayingWave playingWave;
-    bool playingSound = false;
     
     //ROM
     const std::string& romPath;
@@ -230,22 +228,20 @@ private:
                 decrementTimes[(int)type] -= deltaTime;
             }
 
-            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && !playingSound)
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer)
             {
                 //Play the buzzer sound
-                playingWave = soundEngine.PlayWaveform(&waveform);
-                playingSound = true;
+                soundEngine.PlayWaveform(&waveform);
             }
         }
         else
         {
             decrementTimes[(int)type] = Chip8_CPU::TIMER_DECREMENT_RATE;
 
-            if (type == Chip8_CPU::TimerRegisterType::SoundTimer && playingSound)
+            if (type == Chip8_CPU::TimerRegisterType::SoundTimer)
             {
                 //Stop playing the buzzer sound
-                soundEngine.StopWaveform(playingWave);
-                playingSound = false;
+                soundEngine.StopAll();
             }
         }
     }
