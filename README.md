@@ -16,6 +16,7 @@ Finally, the following is a demo of the emulator running the Pong (1 player) ROM
 On Windows, project files of Visual Studio should contain all the necessary information to build and run the emulator. You need to install the following from Visual Studio Installer:
   1) C#/.NET desktop development package (make sure the .NET version is .NET8, higher versions caused problems in my testing)
   2) C++ desktop development package
+
 You might need to set Chip8EmulatorLauncher project as the startup project in Visual Studio. Once you do all of these, you can simply press the Start button.
 Note: Visual Studio 2024 was used in the development of this project. Higher versions require legacy packages to be installed.
 
