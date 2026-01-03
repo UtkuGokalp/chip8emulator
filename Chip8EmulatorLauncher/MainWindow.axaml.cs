@@ -154,7 +154,13 @@ namespace Chip8EmulatorLauncher
 #if WINDOWS
             Process.Start("explorer.exe", path);
 #elif LINUX
-            Process.Start("xdg-open", path);
+            ProcessStartInfo info = new ProcessStartInfo()
+            {
+                FileName = "xdg-open",
+                Arguments = Environment.CurrentDirectory,
+                UseShellExecute = false,
+            };
+            Process.Start(info);
 #endif
             ResetErrorText();
         }
