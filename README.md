@@ -1,10 +1,8 @@
 # Licensing
 This project is licensed under the MIT license. See the [license](LICENSE.txt) file.
 
-# Chip-8 Emulator
-This is a project I started to learn more about emulation, something that I am curious about. I chose Chip-8 because it is a simple system, which I thought was appropriate for my first emulation project. I am using olcPixelGameEngine for rendering and olcSoundWaveEngine for sound, which have their respective GitHub repositories [here](https://github.com/OneLoneCoder/olcPixelGameEngine) and [here](https://github.com/OneLoneCoder/olcSoundWaveEngine).
-
-I developed the emulator itself in C++. Once I found Chip-8 ROMs [here](https://github.com/kripod/chip8-roms) and added them to the project, it became apparent that I would need a launcher because of the amount of ROMs. That's when I decided to write a launcher in C#, which scans the folders, lists all the ROMs and runs the emulator with the selected ROM.
+# What is this?
+This is an emulator that emulates the simple Chip-8 system, which was developed in 1970s. The project uses [olcPixelGameEngine](https://github.com/OneLoneCoder/olcPixelGameEngine) for rendering, [olcSoundWaveEngine](https://github.com/OneLoneCoder/olcSoundWaveEngine) for sounds on the emulator side and Avalonia UI with .NET8 on the launcher side. The ROMs included in the project were taken from [here](https://github.com/kripod/chip8-roms).
 
 The following is a screenshot of the launcher. It is configured so that you can only choose a single ROM, trying to choose another one deselects the currently selected ROM. The ROMs in the "Hires" category doesn't work at all, since they require extra features that exist on extended versions of Chip-8 and the emulator doesn't currently support them.
 
@@ -15,7 +13,11 @@ Finally, the following is a demo of the emulator running the Pong (1 player) ROM
 ![EmulatorDemo](Pong.gif)
 
 # Building on Windows
-On Windows, project files of Visual Studio should contain all the necessary information to build and run the emulator. Just click the Start button.
+On Windows, project files of Visual Studio should contain all the necessary information to build and run the emulator. You need to install the following from Visual Studio Installer:
+  1) C#/.NET desktop development package (make sure the .NET version is .NET8, higher versions caused problems in my testing)
+  2) C++ desktop development package
+You might need to set Chip8EmulatorLauncher project as the startup project in Visual Studio. Once you do all of these, you can simply press the Start button.
+Note: Visual Studio 2024 was used in the development of this project. Higher versions require legacy packages to be installed.
 
 # Building on Linux (Ubuntu)
 On Ubuntu, you first need to install the necessary libraries.
