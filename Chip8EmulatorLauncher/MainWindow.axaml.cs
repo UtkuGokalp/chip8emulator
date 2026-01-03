@@ -154,7 +154,7 @@ namespace Chip8EmulatorLauncher
 #if WINDOWS
             Process.Start("explorer.exe", path);
 #elif LINUX
-            //TODO: Implement Linux explorer opening
+            Process.Start("xdg-open", path);
 #endif
             ResetErrorText();
         }
