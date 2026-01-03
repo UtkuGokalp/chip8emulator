@@ -175,7 +175,16 @@ namespace Chip8EmulatorLauncher
                 if (cbx.Name == source.Name) //This is the combobox that we changed the selection in
                 {
                     //Update the ROM path
-                    bool success = romName2romPath[i].TryGetValue(cbx.SelectedItem.ToString(), out string romPath);
+                    if (cbx.SelectedItem == null) //This should never be true
+                    {
+                        continue;
+                    }
+                    string? selectedItem = cbx.SelectedItem.ToString();
+                    if (selectedItem == null) //This should never be true either
+                    {
+                        continue;
+                    }
+                    bool success = romName2romPath[i].TryGetValue(selectedItem, out string? romPath);
                     if (success)
                     {
                         SelectedROMPath = romPath;
